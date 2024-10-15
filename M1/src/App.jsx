@@ -65,7 +65,7 @@ function App() {
                     ))}
                   </div>
                 ) : (
-                  <p>No books available</p>
+                  <p>Tidak ditemukan buku</p>
                 )}
               </div>
             </div>
@@ -78,7 +78,7 @@ function App() {
               </h1>
             </div>
             <div
-              className="containet-fluid bg-secondary"
+              className="containet-fluid"
               style={{ paddingLeft: "3rem", paddingRight: "3.5rem" }}
             >
               {userData.suggestion &&
@@ -96,12 +96,12 @@ function App() {
                   ))}
                 </div>
               ) : (
-                <p>No recommendations found.</p>
+                <p>tidak ada buku rekomendasi untuk anda</p>
               )}
             </div>
           </>
         ) : (
-          <p>user not found</p>
+          <p>user tidak ada</p>
         )}
       </div>
     </>

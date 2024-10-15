@@ -41,7 +41,7 @@ function Library({ imageUrl, title, author, lastRead, lastPage, totalPage }) {
               >
                 <h3 style={{ marginBottom: "0.5rem", margin: 0,fontWeight:"700"}}>
                   {title}{" "}
-                  <span style={{ fontWeight: "normal" }}>by {author}</span>
+                  <span style={{ fontWeight: "normal", fontSize:"1rem"}}>by {author}</span>
                 </h3>
               </div>
               <div
@@ -67,7 +67,7 @@ function Library({ imageUrl, title, author, lastRead, lastPage, totalPage }) {
                     FINISH READ
                   </span>
                 )}
-                <h3 style={{ margin: "0", color: "#888", fontSize: "1.2rem" }}>
+                <h3 style={{ margin: "0", color: "#888", fontSize: "1.2rem", marginRight:"2rem",padding:"0" }}>
                   Read from {lastRead}
                 </h3>
               </div>
