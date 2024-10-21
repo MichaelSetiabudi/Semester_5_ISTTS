@@ -1,17 +1,53 @@
-import React from "react";
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+import React, { useState } from "react";
 
 function ListEmployee({ employees }) {
+  const [selectedDivision, setSelectedDivision] = useState("All"); // State untuk menyimpan divisi yang dipilih
+  const [employeeList, setEmployeeList] = useState(employees); // State untuk daftar karyawan
+  const [showModal, setShowModal] = useState(false); // State untuk mengontrol modal
+  const [employeeToDelete, setEmployeeToDelete] = useState(null); // State untuk menyimpan karyawan yang akan dihapus
+
   const getBackgroundColor = (division) => {
     switch (division) {
       case "Operation":
-        return "#ff6161"; 
+        return "#ff6161";
       case "Engineer":
-        return "#ffb061"; 
+        return "#ffb061";
       case "Admin":
-        return "#ffdf61"; 
+        return "#ffdf61";
       default:
         return "#fff";
     }
+  };
+
+  // Filter employees berdasarkan divisi yang dipilih
+  const filteredEmployees =
+    selectedDivision === "All"
+      ? employeeList
+      : employeeList.filter(
+          (employee) => employee.division === selectedDivision
+        );
+
+  // Fungsi untuk membuka modal delete
+  const handleDeleteClick = (employee) => {
+    setEmployeeToDelete(employee);
+    setShowModal(true);
+  };
+
+  // Fungsi untuk menghapus employee dari list
+  const confirmDelete = () => {
+    setEmployeeList((prevList) =>
+      prevList.filter((employee) => employee.id !== employeeToDelete.id)
+    );
+    setShowModal(false); // Tutup modal setelah delete
+    setEmployeeToDelete(null); // Reset employeeToDelete setelah delete
+  };
+
+  // Fungsi untuk menutup modal tanpa menghapus
+  const closeModal = () => {
+    setShowModal(false);
+    setEmployeeToDelete(null);
   };
 
   return (
@@ -28,6 +64,7 @@ function ListEmployee({ employees }) {
       >
         <button
           type="button"
+          onClick={() => setSelectedDivision("All")} // Mengatur filter menjadi "All"
           style={{
             backgroundColor: "#cdcdcd",
             border: "none",
@@ -46,6 +83,7 @@ function ListEmployee({ employees }) {
         </button>
         <button
           type="button"
+          onClick={() => setSelectedDivision("Operation")} // Mengatur filter menjadi "Operation"
           style={{
             backgroundColor: "#ff6161",
             border: "none",
@@ -64,6 +102,7 @@ function ListEmployee({ employees }) {
         </button>
         <button
           type="button"
+          onClick={() => setSelectedDivision("Engineer")} // Mengatur filter menjadi "Engineer"
           style={{
             backgroundColor: "#ffb061",
             border: "none",
@@ -82,6 +121,7 @@ function ListEmployee({ employees }) {
         </button>
         <button
           type="button"
+          onClick={() => setSelectedDivision("Admin")} // Mengatur filter menjadi "Admin"
           style={{
             backgroundColor: "#ffdf61",
             border: "none",
@@ -100,11 +140,11 @@ function ListEmployee({ employees }) {
         </button>
       </div>
       <div className="m-0" style={{ padding: "2rem 4vw" }}>
-        {employees.length === 0 ? (
+        {filteredEmployees.length === 0 ? (
           <h1>Tidak ada employee. Silahkan tambahkan employee baru</h1>
         ) : (
           <ul className="m-0 p-0" style={{ listStyle: "none", paddingLeft: 0 }}>
-            {employees.map((employee) => (
+            {filteredEmployees.map((employee) => (
               <li
                 key={employee.id}
                 style={{
@@ -165,6 +205,7 @@ function ListEmployee({ employees }) {
                     </button>
                     <button
                       type="button"
+                      onClick={() => handleDeleteClick(employee)} // Fungsi untuk membuka modal delete
                       style={{
                         minWidth: "80px",
                         height: "7vh",
@@ -186,6 +227,72 @@ function ListEmployee({ employees }) {
           </ul>
         )}
       </div>
+
+      {showModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "2rem",
+              borderRadius: "8px",
+              textAlign: "center",
+              maxWidth: "400px",
+              width: "100%",
+            }}
+          >
+            <h3>Are you sure you want to delete {employeeToDelete?.name}-{employeeToDelete?.id}?</h3>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-around",
+                marginTop: "1.5rem",
+              }}
+            >
+              <button
+                onClick={confirmDelete}
+                style={{
+                  backgroundColor: "#ff6161",
+                  padding: "0.5rem 2rem",
+                  borderRadius: "5px",
+                  color: "black",
+                  fontWeight:"700",
+                  borderColor: "black",
+                  width:"50%",
+                  marginRight:"2rem"
+                }}
+              >
+                Delete
+              </button>
+              <button
+                onClick={closeModal}
+                style={{
+                  backgroundColor: "#ccc",
+                  padding: "0.5rem 2rem",
+                  borderRadius: "5px",
+                  fontWeight:"700",
+                  borderColor: "black",
+                  width:"50%",
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
