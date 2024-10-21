@@ -85,7 +85,6 @@ function App() {
               userData.suggestion.length > 0 ? (
                 <div className="row">
                   {userData.suggestion.map((recBook, index) => (
-                    console.log(recBook),
                     <ForYou
                       key={index}
                       imageUrl={recBook.image_url}
