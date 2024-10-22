@@ -2,11 +2,10 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 
-function ListEmployee({ employees }) {
-  const [selectedDivision, setSelectedDivision] = useState("All"); // State untuk menyimpan divisi yang dipilih
-  const [employeeList, setEmployeeList] = useState(employees); // State untuk daftar karyawan
-  const [showModal, setShowModal] = useState(false); // State untuk mengontrol modal
-  const [employeeToDelete, setEmployeeToDelete] = useState(null); // State untuk menyimpan karyawan yang akan dihapus
+function ListEmployee({ employees, setEmployees, setRoute, setSelectedEmployee }) {
+  const [selectedDivision, setSelectedDivision] = useState("All");
+  const [showModal, setShowModal] = useState(false);
+  const [employeeToDelete, setEmployeeToDelete] = useState(null);
 
   const getBackgroundColor = (division) => {
     switch (division) {
@@ -21,33 +20,33 @@ function ListEmployee({ employees }) {
     }
   };
 
-  // Filter employees berdasarkan divisi yang dipilih
   const filteredEmployees =
     selectedDivision === "All"
-      ? employeeList
-      : employeeList.filter(
-          (employee) => employee.division === selectedDivision
-        );
+      ? employees 
+      : employees.filter((employee) => employee.division === selectedDivision);
 
-  // Fungsi untuk membuka modal delete
   const handleDeleteClick = (employee) => {
     setEmployeeToDelete(employee);
     setShowModal(true);
   };
 
-  // Fungsi untuk menghapus employee dari list
   const confirmDelete = () => {
-    setEmployeeList((prevList) =>
-      prevList.filter((employee) => employee.id !== employeeToDelete.id)
+    const updatedEmployees = employees.filter(
+      (employee) => employee.id !== employeeToDelete.id
     );
-    setShowModal(false); // Tutup modal setelah delete
-    setEmployeeToDelete(null); // Reset employeeToDelete setelah delete
+    setEmployees(updatedEmployees);
+    setShowModal(false);
+    setEmployeeToDelete(null);
   };
 
-  // Fungsi untuk menutup modal tanpa menghapus
   const closeModal = () => {
     setShowModal(false);
     setEmployeeToDelete(null);
+  };
+
+  const handleEditClick = (employee) => {
+    setSelectedEmployee(employee);
+    setRoute("edit");
   };
 
   return (
@@ -59,12 +58,12 @@ function ListEmployee({ employees }) {
           margin: "0",
           paddingTop: "2vh",
           paddingBottom: "2vh",
-          flexWrap: "wrap", // Allow buttons to wrap on smaller screens
+          flexWrap: "wrap",
         }}
       >
         <button
           type="button"
-          onClick={() => setSelectedDivision("All")} // Mengatur filter menjadi "All"
+          onClick={() => setSelectedDivision("All")}
           style={{
             backgroundColor: "#cdcdcd",
             border: "none",
@@ -75,7 +74,7 @@ function ListEmployee({ employees }) {
             fontSize: "1.5rem",
             color: "black",
             fontWeight: "600",
-            flex: "1", // Allows buttons to resize based on available space
+            flex: "1",
             maxWidth: "250px",
           }}
         >
@@ -83,7 +82,7 @@ function ListEmployee({ employees }) {
         </button>
         <button
           type="button"
-          onClick={() => setSelectedDivision("Operation")} // Mengatur filter menjadi "Operation"
+          onClick={() => setSelectedDivision("Operation")}
           style={{
             backgroundColor: "#ff6161",
             border: "none",
@@ -102,7 +101,7 @@ function ListEmployee({ employees }) {
         </button>
         <button
           type="button"
-          onClick={() => setSelectedDivision("Engineer")} // Mengatur filter menjadi "Engineer"
+          onClick={() => setSelectedDivision("Engineer")}
           style={{
             backgroundColor: "#ffb061",
             border: "none",
@@ -121,7 +120,7 @@ function ListEmployee({ employees }) {
         </button>
         <button
           type="button"
-          onClick={() => setSelectedDivision("Admin")} // Mengatur filter menjadi "Admin"
+          onClick={() => setSelectedDivision("Admin")}
           style={{
             backgroundColor: "#ffdf61",
             border: "none",
@@ -173,11 +172,24 @@ function ListEmployee({ employees }) {
                         justifyContent: "flex-end",
                       }}
                     >
-                      <div style={{display:"flex", flexDirection:"column"}}>
-                        <p style={{ paddingTop: "1vh", paddingRight: "1vw",paddingBottom:"0", margin:"0" }}>
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <p
+                          style={{
+                            paddingTop: "1vh",
+                            paddingRight: "1vw",
+                            paddingBottom: "0",
+                            margin: "0",
+                          }}
+                        >
                           Join at {employee.date}
                         </p>
-                        <h5 style={{textAlign:"end", paddingRight:"1.3vw", paddingBottom:"0"}}>
+                        <h5
+                          style={{
+                            textAlign: "end",
+                            paddingRight: "1.3vw",
+                            paddingBottom: "0",
+                          }}
+                        >
                           <b>{employee.division}</b>
                         </h5>
                       </div>
@@ -189,6 +201,7 @@ function ListEmployee({ employees }) {
                   >
                     <button
                       type="button"
+                      onClick={() => handleEditClick(employee)} 
                       style={{
                         minWidth: "80px",
                         height: "7vh",
@@ -205,7 +218,7 @@ function ListEmployee({ employees }) {
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleDeleteClick(employee)} // Fungsi untuk membuka modal delete
+                      onClick={() => handleDeleteClick(employee)}
                       style={{
                         minWidth: "80px",
                         height: "7vh",
@@ -253,7 +266,10 @@ function ListEmployee({ employees }) {
               width: "100%",
             }}
           >
-            <h3>Are you sure you want to delete {employeeToDelete?.name}-{employeeToDelete?.id}?</h3>
+            <h3>
+              Are you sure you want to delete{" "}
+              {employeeToDelete?.name} - {employeeToDelete?.id}?
+            </h3>
             <div
               style={{
                 display: "flex",
@@ -265,29 +281,28 @@ function ListEmployee({ employees }) {
                 onClick={confirmDelete}
                 style={{
                   backgroundColor: "#ff6161",
-                  padding: "0.5rem 2rem",
-                  borderRadius: "5px",
-                  color: "black",
-                  fontWeight:"700",
-                  borderColor: "black",
-                  width:"50%",
-                  marginRight:"2rem"
+                  padding: "0.5rem 1.5rem",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "1.5rem",
+                  fontWeight: "600",
+                  color: "white",
                 }}
               >
-                Delete
+                Yes
               </button>
               <button
                 onClick={closeModal}
                 style={{
-                  backgroundColor: "#ccc",
-                  padding: "0.5rem 2rem",
-                  borderRadius: "5px",
-                  fontWeight:"700",
-                  borderColor: "black",
-                  width:"50%",
+                  backgroundColor: "#e1e1e1",
+                  padding: "0.5rem 1.5rem",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "1.5rem",
+                  fontWeight: "600",
                 }}
               >
-                Cancel
+                No
               </button>
             </div>
           </div>

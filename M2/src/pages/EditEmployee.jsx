@@ -1,48 +1,31 @@
 import React, { useState } from "react";
 
-function AddEmployee({ employees, setEmployees, setRoute }) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [division, setDivision] = useState("");
+function EditEmployee({ employeetoUpdate, setEmployees, employees, setRoute }) {
+  const [name, setName] = useState(employeetoUpdate?.name || "");
+  const [id, setId] = useState(employeetoUpdate?.id || "");
+  const [email, setEmail] = useState(employeetoUpdate?.email || "");
+  const [division, setDivision] = useState(employeetoUpdate?.division || "");
   const [error, setError] = useState("");
 
-  const generateNextEmployeeId = () => {
-    if (employees.length === 0) {
-      return "EMPL001"; 
-    }
-    
-    const lastEmployeeId = employees[employees.length - 1].id; 
-    const lastEmployeeNumber = parseInt(lastEmployeeId.replace("EMPL", ""), 10); 
-    const nextEmployeeNumber = lastEmployeeNumber + 1;
-    
-    return `EMPL${nextEmployeeNumber.toString().padStart(3, "0")}`;
-  };
-
-  const nextEmployeeId = generateNextEmployeeId();
-
-  const handleAddEmployee = () => {
+  const handleEditEmployee = () => {
     if (!division) {
       setError("Please select a division.");
       return;
     }
 
-    const currentDate = new Date();
-    const formattedDate = `${String(currentDate.getDate()).padStart(2, '0')}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${currentDate.getFullYear()}`;
-
-    const newEmployee = {
-      id: nextEmployeeId,
+    const updatedEmployee = {
+      ...employeetoUpdate,
       name,
       email,
       division,
-      date: formattedDate,
     };
 
-    setEmployees([...employees, newEmployee]); 
-    setRoute("home"); 
-    setName("");
-    setEmail("");
-    setDivision("");
-    setError(""); 
+    const updatedEmployees = employees.map((emp) =>
+      emp.id === employeetoUpdate.id ? updatedEmployee : emp
+    );
+
+    setEmployees(updatedEmployees); 
+    setRoute("home");
   };
 
   return (
@@ -51,12 +34,12 @@ function AddEmployee({ employees, setEmployees, setRoute }) {
       style={{ paddingLeft: "3vw", paddingTop: "3vh" }}
     >
       <h1>
-        <b>Add Employee</b>
+        <b>Edit Employee</b>
       </h1>
-      <div className="p-0 m-0">
-        <p>ID: {nextEmployeeId}</p>
+      <div className="p-0 m-0" style={{fontWeight:"700"}}>
+        <p>ID: {id}</p> {/* Display the employee's ID */}
       </div>
-      <div className="container-fluid p-0 m-0">
+      <div className="container-fluid p-0 m-0" >
         <div style={{ marginBottom: "1rem" }}>
           <input
             style={{
@@ -65,6 +48,7 @@ function AddEmployee({ employees, setEmployees, setRoute }) {
               borderWidth: "3px",
               padding: "1rem",
               fontSize: "1rem",
+              fontWeight:"700"
             }}
             type="text"
             name="Name"
@@ -82,6 +66,7 @@ function AddEmployee({ employees, setEmployees, setRoute }) {
               borderWidth: "3px",
               padding: "1rem",
               fontSize: "1rem",
+              fontWeight:"700"
             }}
             type="text"
             name="Email"
@@ -99,6 +84,7 @@ function AddEmployee({ employees, setEmployees, setRoute }) {
               borderWidth: "3px",
               padding: "1rem",
               fontSize: "1rem",
+              fontWeight:"700"
             }}
             name="Division"
             value={division}
@@ -126,9 +112,9 @@ function AddEmployee({ employees, setEmployees, setRoute }) {
               fontWeight: "800",
               backgroundColor: "#cfcfcf",
             }}
-            onClick={handleAddEmployee}
+            onClick={handleEditEmployee}
           >
-            Add
+            Save
           </button>
         </div>
       </div>
@@ -136,4 +122,4 @@ function AddEmployee({ employees, setEmployees, setRoute }) {
   );
 }
 
-export default AddEmployee;
+export default EditEmployee;

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AddEmployee from "./pages/AddEmployee";
 import ListEmployee from "./pages/ListEmployee";
+import EditEmployee from "./pages/EditEmployee"; 
 
 function Nav({ handleNavbarClick }) {
   return (
@@ -27,13 +28,13 @@ function Nav({ handleNavbarClick }) {
           <a
             href="#"
             style={{ color: "white", fontSize: "1.5rem" }}
-            onClick={() => handleNavbarClick('home')}
+            onClick={() => handleNavbarClick("home")}
           >
             List
           </a>
           <a
             href="#"
-            onClick={() => handleNavbarClick('addEmployee')}
+            onClick={() => handleNavbarClick("addEmployee")}
             style={{
               color: "white",
               fontSize: "1.5rem",
@@ -49,8 +50,9 @@ function Nav({ handleNavbarClick }) {
 }
 
 function App() {
-  const [route, setRoute] = useState('home');
-  const [listemployees, setEmployees] = useState([]);
+  const [route, setRoute] = useState("home"); 
+  const [employees, setEmployees] = useState([]); 
+  const [selectedEmployee, setSelectedEmployee] = useState(null); 
 
   const handleNavbarClick = (page) => {
     setRoute(page);
@@ -59,9 +61,30 @@ function App() {
   return (
     <>
       <Nav handleNavbarClick={handleNavbarClick} />
-      <div className="content">
-        {route === 'home' && <ListEmployee employees={listemployees} />}
-        {route === 'addEmployee' && <AddEmployee setEmployees={setEmployees} employees={listemployees} setRoute={setRoute} />}
+      <div className="content" style={{ padding: "2rem" }}>
+        {route === "home" && (
+          <ListEmployee
+            employees={employees}
+            setEmployees={setEmployees}
+            setRoute={setRoute} 
+            setSelectedEmployee={setSelectedEmployee}
+          />
+        )}
+        {route === "addEmployee" && (
+          <AddEmployee
+            employees={employees}
+            setEmployees={setEmployees}
+            setRoute={setRoute}
+          />
+        )}
+        {route === "edit" && selectedEmployee && (
+          <EditEmployee
+            employeetoUpdate={selectedEmployee}
+            setEmployees={setEmployees}
+            employees={employees}
+            setRoute={setRoute}
+          />
+        )}
       </div>
     </>
   );
