@@ -27,7 +27,7 @@ function Nav({ handleNavbarClick }) {
         >
           <a
             href="#"
-            style={{ color: "white", fontSize: "1.5rem" }}
+            style={{ color: "white", fontSize: "1.5rem", textDecoration:"none"}}
             onClick={() => handleNavbarClick("home")}
           >
             List
