@@ -1,0 +1,312 @@
+[
+    {
+        "user": {
+            "id" : "0001",
+            "name": "Amelia Charlotte"
+        },
+        "library": [
+            {
+                "id": 1,
+                "title": "The Great Gatsby",
+                "author": "F. Scott Fitzgerald",
+                "image_url": "https://upload.wikimedia.org/wikipedia/commons/7/7a/The_Great_Gatsby_Cover_1925_Retouched.jpg",
+                "last_pages": 55,
+                "total_pages": 115,
+                "last_read": "02/02/2024"
+            },
+            {
+                "id": 2,
+                "title": "The Catcher in the Rye",
+                "author": "J.D. Salinger",
+                "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/The_Catcher_in_the_Rye_%281951%2C_first_edition_cover%29.jpg/220px-The_Catcher_in_the_Rye_%281951%2C_first_edition_cover%29.jpg",
+                "last_pages": 15,
+                "total_pages": 224,
+                "last_read": "02/03/2024"
+            },
+            {
+                "id": 3,
+                "title": "To Kill a Mockingbird",
+                "author": "Harper Lee",
+                "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/4f/To_Kill_a_Mockingbird_%28first_edition_cover%29.jpg",
+                "last_pages": 281,
+                "total_pages": 281,
+                "last_read": "12/02/2024"
+            },
+            {
+                "id": 4,
+                "title": "The Year of 1984",
+                "author": "George Orwell",
+                "image_url": "https://cdn.gramedia.com/uploads/items/9780451524935.jpg",
+                "last_pages": 232,
+                "total_pages": 328,
+                "last_read": "22/02/2024"
+            },
+            {
+                "id": 5,
+                "title": "The Lord of the Rings",
+                "author": "J.R.R. Tolkien",
+                "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwjvtARVQAFZvjgby4i1ev7I2h0OgHcG8YoQ&s",
+                "total_pages": 1216,
+                "last_pages": 553,
+                "last_read": "05/03/2024"
+            }
+        ],
+        "suggestion": [
+            {
+                "id": 1,
+                "title": "The Hobbit",
+                "author": "J.R.R. Tolkien",
+                "image_url": "https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/The_Hobbit_trilogy_dvd_cover.jpg/220px-The_Hobbit_trilogy_dvd_cover.jpg",
+                "pages": 310
+            },
+            {
+                "id": 2,
+                "title": "The Chronicles of Narnia",
+                "author": "C.S. Lewis",
+                "image_url": "https://m.media-amazon.com/images/M/MV5BMTc0NTUwMTU5OV5BMl5BanBnXkFtZTcwNjAwNzQzMw@@._V1_.jpg",
+                "pages": 767
+            },
+            {
+                "id": 3,
+                "title": "The Little Prince",
+                "author": "Antoine de Saint-Exupéry",
+                "image_url": "https://upload.wikimedia.org/wikipedia/en/thumb/0/05/Littleprince.JPG/220px-Littleprince.JPG",
+                "pages": 96
+            }
+        ]
+    },
+    {
+        "user": {
+            "id": "0003",
+            "name": "Benjamin Lucas"
+        },
+        "library": [
+            {
+                "id": 1,
+                "title": "Pride and Prejudice",
+                "author": "Jane Austen",
+                "image_url": "https://m.media-amazon.com/images/M/MV5BMTA1NDQ3NTcyOTNeQTJeQWpwZ15BbWU3MDA0MzA4MzE@._V1_.jpg",
+                "last_pages": 123,
+                "total_pages": 432,
+                "last_read": "04/03/2024"
+            },
+            {
+                "id": 2,
+                "title": "The Year of 1984",
+                "author": "George Orwell",
+                "image_url": "https://cdn.gramedia.com/uploads/items/9780451524935.jpg",
+                "last_pages": 328,
+                "total_pages": 328,
+                "last_read": "08/03/2024"
+            },
+            {
+                "id": 3,
+                "title": "Brave New World",
+                "author": "Aldous Huxley",
+                "image_url": "https://cdn.gramedia.com/uploads/images/1/28946/big_covers/ID_HCO2015MTH11BNWO.jpeg",
+                "last_pages": 66,
+                "total_pages": 311,
+                "last_read": "11/02/2024"
+            },
+            {
+                "id": 4,
+                "title": "Crime and Punishment",
+                "author": "Fyodor Dostoevsky",
+                "image_url": "https://upload.wikimedia.org/wikipedia/en/4/4b/Crimeandpunishmentcover.png",
+                "last_pages": 430,
+                "total_pages": 430,
+                "last_read": "20/02/2024"
+            }
+        ],
+        "suggestion": [
+            {
+                "id": 1,
+                "title": "The Brothers Karamazov",
+                "author": "Fyodor Dostoevsky",
+                "image_url": "https://m.media-amazon.com/images/I/71OZJsgZzQL._AC_UF1000,1000_QL80_.jpg",
+                "pages": 824
+            },
+            {
+                "id": 2,
+                "title": "Fahrenheit 451",
+                "author": "Ray Bradbury",
+                "image_url": "https://upload.wikimedia.org/wikipedia/en/d/db/Fahrenheit_451_1st_ed_cover.jpg",
+                "pages": 158
+            },
+            {
+                "id": 3,
+                "title": "Animal Farm",
+                "author": "George Orwell",
+                "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Animal_Farm_-_1st_edition.jpg/440px-Animal_Farm_-_1st_edition.jpg",
+                "pages": 112
+            }
+        ]
+    },
+    {
+        "user": {
+            "id": "0006",
+            "name": "Charlotte Emily"
+        },
+        "library": [
+            {
+                "id": 1,
+                "title": "Wuthering Heights",
+                "author": "Emily Bronte",
+                "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRVyim1sOEJlsyqi8XtGIBKpW5He5iOzTKPg&s",
+                "last_pages": 88,
+                "total_pages": 416,
+                "last_read": "03/03/2024"
+            },
+            {
+                "id": 2,
+                "title": "Frankenstein",
+                "author": "Mary Shelley",
+                "image_url": "https://m.media-amazon.com/images/I/81TVqiv-ctL._AC_UF1000,1000_QL80_.jpg",
+                "last_pages": 280,
+                "total_pages": 280,
+                "last_read": "10/03/2024"
+            },
+            {
+                "id": 3,
+                "title": "Dracula",
+                "author": "Bram Stoker",
+                "image_url": "https://cdn.gramedia.com/uploads/items/9786020614151_English_Classics_Dracula.jpg",
+                "last_pages": 211,
+                "total_pages": 418,
+                "last_read": "15/02/2024"
+            }
+        ],
+        "suggestion": [
+            {
+                "id": 1,
+                "title": "Jane Eyre",
+                "author": "Charlotte Bronte",
+                "image_url": "https://cdn.gramedia.com/uploads/items/9786020622774_JANE_EYRE.jpg",
+                "pages": 500
+            },
+            {
+                "id": 2,
+                "title": "The Picture of Dorian Gray",
+                "author": "Oscar Wilde",
+                "image_url": "https://cdn.gramedia.com/uploads/items/9786020634371_The_Picture_of_Dorian_Gray_cov.jpg",
+                "pages": 320
+            },
+            {
+                "id": 3,
+                "title": "The Phantom of the Opera",
+                "author": "Gaston Leroux",
+                "image_url": "https://m.media-amazon.com/images/M/MV5BNDczNzg4OTM3MV5BMl5BanBnXkFtZTcwOTQzMTEzMw@@._V1_.jpg",
+                "pages": 190
+            }
+        ]
+    },
+    {
+        "user": {
+            "id": "0007",
+            "name": "Oliver Henry"
+        },
+        "library": [
+            {
+                "id": 1,
+                "title": "The Alchemist",
+                "author": "Paulo Coelho",
+                "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhM2P-YDSJ1CTvekqJ29Nepvn69q6evyipFg&s",
+                "last_pages": 67,
+                "total_pages": 208,
+                "last_read": "25/02/2024"
+            },
+            {
+                "id": 2,
+                "title": "Life of Pi",
+                "author": "Yann Martel",
+                "image_url": "https://upload.wikimedia.org/wikipedia/en/4/45/Life_of_Pi_cover.png",
+                "last_pages": 104,
+                "total_pages": 354,
+                "last_read": "28/02/2024"
+            },
+            {
+                "id": 3,
+                "title": "The Old Man and the Sea",
+                "author": "Ernest Hemingway",
+                "image_url": "https://upload.wikimedia.org/wikipedia/en/7/73/Oldmansea.jpg",
+                "last_pages": 127,
+                "total_pages": 127,
+                "last_read": "01/03/2024"
+            }
+        ],
+        "suggestion": [
+            {
+                "id": 1,
+                "title": "Moby Dick",
+                "author": "Herman Melville",
+                "image_url": "https://covers.storytel.com/jpg-640/9789354866609.69d09c02-11bd-4720-8c33-9b4396a96b8b?optimize=high&quality=70&width=600",
+                "pages": 635
+            },
+            {
+                "id": 2,
+                "title": "The Great Alone",
+                "author": "Kristin Hannah",
+                "image_url": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1501852423i/34912895.jpg",
+                "pages": 435
+            }
+        ]
+    },
+    {
+        "user": {
+            "id": "0010",
+            "name": "Sophia Isabella"
+        },
+        "library": [
+            {
+                "id": 1,
+                "title": "Gone with the Wind",
+                "author": "Margaret Mitchell",
+                "image_url": "https://upload.wikimedia.org/wikipedia/en/6/6b/Gone_with_the_Wind_cover.jpg",
+                "last_pages": 412,
+                "total_pages": 1037,
+                "last_read": "07/03/2024"
+            },
+            {
+                "id": 2,
+                "title": "The Help",
+                "author": "Kathryn Stockett",
+                "image_url": "https://m.media-amazon.com/images/M/MV5BMTM5OTMyMjIxOV5BMl5BanBnXkFtZTcwNzU4MjIwNQ@@._V1_.jpg",
+                "last_pages": 188,
+                "total_pages": 464,
+                "last_read": "02/03/2024"
+            },
+            {
+                "id": 3,
+                "title": "Memoirs of a Geisha",
+                "author": "Arthur Golden",
+                "image_url": "https://m.media-amazon.com/images/M/MV5BMTYxMzM4NTEzOV5BMl5BanBnXkFtZTcwNDMwNjQzMw@@._V1_.jpg",
+                "last_pages": 129,
+                "total_pages": 512,
+                "last_read": "10/02/2024"
+            }
+        ],
+        "suggestion": [
+            {
+                "id": 1,
+                "title": "The Kite Runner",
+                "author": "Khaled Hosseini",
+                "image_url": "https://cdn.gramedia.com/uploads/items/The_Kite_Runner.jpg",
+                "pages": 371
+            },
+            {
+                "id": 2,
+                "title": "A Thousand Splendid Suns",
+                "author": "Khaled Hosseini",
+                "image_url": "https://id-test-11.slatic.net/p/db71f971a307a8980fc7a3b051e5f283.jpg",
+                "pages": 432
+            },
+            {
+                "id": 3,
+                "title": "Water for Elephants",
+                "author": "Sara Gruen",
+                "image_url": "https://upload.wikimedia.org/wikipedia/en/6/60/Water_for_Elephants_Poster.jpg",
+                "pages": 335
+            }
+        ]
+    }
+]
