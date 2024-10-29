@@ -1,25 +1,12 @@
 import React, { useState } from "react";
-import Joi from "joi";
 import AdminMenu from "./pages/adminMenu";
-
-function LoginPage({ onLoginSuccess }) {
+import LoginMenu from "./pages/loginMenu";
+function LoginPage({ onLoginSuccess, users, setUserLoggedIn }) {
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
   const [errorMessage, setErrorMessage] = useState("");
-
-  const schema = Joi.object({
-    email: Joi.string().required().valid("admin").messages({
-      "string.empty": "Email tidak boleh kosong.",
-      "any.only": "Email tidak terdaftar.",
-    }),
-    password: Joi.string().required().valid("admin").messages({
-      "string.empty": "Password tidak boleh kosong.",
-      "any.only": "Password salah.",
-    }),
-  });
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({
@@ -28,15 +15,30 @@ function LoginPage({ onLoginSuccess }) {
     });
   };
 
+  const checkUserCredentials = (email, password) => {
+    if (email === "admin" && password === "admin") {
+      return "admin";
+    }
+    const user = users.find(
+      (user) => user.email === email && user.password === password
+    );
+    if (user) {
+      setUserLoggedIn(user);
+    }
+    return user ? "user" : null;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { error } = schema.validate(form);
-    if (error) {
-      setErrorMessage(error.details[0].message);
+    const { email, password } = form;
+
+    const role = checkUserCredentials(email, password);
+    if (!role) {
+      setErrorMessage("Email atau password salah.");
       return;
     }
     setErrorMessage("");
-    onLoginSuccess();
+    onLoginSuccess(role);
   };
 
   return (
@@ -163,6 +165,7 @@ function App() {
       image_url:
         "https://upload.wikimedia.org/wikipedia/commons/7/7a/The_Great_Gatsby_Cover_1925_Retouched.jpg",
       total_pages: 115,
+      day_added: "2023-01-15T10:30:00",
     },
     {
       id: 2,
@@ -171,6 +174,7 @@ function App() {
       image_url:
         "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/The_Catcher_in_the_Rye_%281951%2C_first_edition_cover%29.jpg/220px-The_Catcher_in_the_Rye_%281951%2C_first_edition_cover%29.jpg",
       total_pages: 224,
+      day_added: "2022-05-22T14:45:00",
     },
     {
       id: 3,
@@ -179,104 +183,140 @@ function App() {
       image_url:
         "https://upload.wikimedia.org/wikipedia/commons/4/4f/To_Kill_a_Mockingbird_%28first_edition_cover%29.jpg",
       total_pages: 281,
+      day_added: "2023-09-08T09:15:00",
     },
     {
       id: 4,
-      title: "The Year of 1984",
+      title: "1984",
       author: "George Orwell",
       image_url: "https://cdn.gramedia.com/uploads/items/9780451524935.jpg",
       total_pages: 328,
+      day_added: "2023-03-10T11:00:00",
     },
   ]);
+  const [usersBook, setUsersBook] = useState({
+    "0001": [
+      {
+        id: 1,
+        title: "The Great Gatsby",
+        author: "F. Scott Fitzgerald",
+        image_url:
+          "https://upload.wikimedia.org/wikipedia/commons/7/7a/The_Great_Gatsby_Cover_1925_Retouched.jpg",
+        last_pages: 50,
+        total_pages: 115,
+        last_read: "04/03/2024",
+      },
+      {
+        id: 2,
+        title: "The Catcher in the Rye",
+        author: "J.D. Salinger",
+        image_url:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/The_Catcher_in_the_Rye_%281951%2C_first_edition_cover%29.jpg/220px-The_Catcher_in_the_Rye_%281951%2C_first_edition_cover%29.jpg",
+        last_pages: 100,
+        total_pages: 224,
+        last_read: "15/02/2024",
+      },
+      {
+        id: 2,
+        title: "The Catcher in the Rye",
+        author: "J.D. Salinger",
+        image_url:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/The_Catcher_in_the_Rye_%281951%2C_first_edition_cover%29.jpg/220px-The_Catcher_in_the_Rye_%281951%2C_first_edition_cover%29.jpg",
+        last_pages: 100,
+        total_pages: 224,
+        last_read: "10/02/2024",
+      },
+    ],
+    "0002": [
+      {
+        id: 3,
+        title: "To Kill a Mockingbird",
+        author: "Harper Lee",
+        image_url:
+          "https://upload.wikimedia.org/wikipedia/commons/4/4f/To_Kill_a_Mockingbird_%28first_edition_cover%29.jpg",
+        last_pages: 100,
+        total_pages: 281,
+        last_read: "01/03/2024",
+      },
+      {
+        id: 4,
+        title: "The Year of 1984",
+        author: "George Orwell",
+        image_url: "https://cdn.gramedia.com/uploads/items/9780451524935.jpg",
+        last_pages: 200,
+        total_pages: 328,
+        last_read: "12/03/2024",
+      },
+    ],
+    "0003": [
+      {
+        id: 5,
+        title: "Pride and Prejudice",
+        author: "Jane Austen",
+        last_pages: 200,
+        total_pages: 279,
+        image_url: "https://cdn.gramedia.com/uploads/items/9780451524935.jpg",
+        last_read: "15/03/2024",
+      },
+    ],
+  });
+
   const [users, setUsers] = useState([
     {
-      id:"1",
+      id: "0001",
       username: "dummy1",
       password: "123",
       email: "dummy1@example.com",
       join_at: "2024-01-15",
-      my_book: [
-        {
-          id: 1,
-          title: "The Great Gatsby",
-          author: "F. Scott Fitzgerald",
-          image_url:
-            "https://upload.wikimedia.org/wikipedia/commons/7/7a/The_Great_Gatsby_Cover_1925_Retouched.jpg",
-          last_pages: 50,
-          total_pages: 115,
-          last_read: "04/03/2024",
-        },
-        {
-          id: 2,
-          title: "The Catcher in the Rye",
-          author: "J.D. Salinger",
-          image_url:
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/The_Catcher_in_the_Rye_%281951%2C_first_edition_cover%29.jpg/220px-The_Catcher_in_the_Rye_%281951%2C_first_edition_cover%29.jpg",
-          last_pages: 100,
-          total_pages: 224,
-          last_read: "15/02/2024",
-        },
-      ],
     },
     {
-      id:"2",
+      id: "0002",
       username: "dummy2",
       password: "123",
       email: "dummy2@example.com",
       join_at: "2024-02-20",
-      my_book: [
-        {
-          id: 3,
-          title: "To Kill a Mockingbird",
-          author: "Harper Lee",
-          image_url:
-            "https://upload.wikimedia.org/wikipedia/commons/4/4f/To_Kill_a_Mockingbird_%28first_edition_cover%29.jpg",
-          last_pages: 100,
-          total_pages: 281,
-          last_read: "01/03/2024",
-        },
-        {
-          id: 4,
-          title: "The Year of 1984",
-          author: "George Orwell",
-          image_url: "https://cdn.gramedia.com/uploads/items/9780451524935.jpg",
-          last_pages: 200,
-          total_pages: 328,
-          last_read: "12/03/2024",
-        },
-      ],
     },
     {
-      id:"3",
+      id: "0003",
       username: "dummy3",
       password: "123",
       email: "dummy3@example.com",
       join_at: "2024-03-10",
-      my_book: [
-        {
-          id: 5,
-          title: "Pride and Prejudice",
-          author: "Jane Austen",
-          last_pages: 200,
-          total_pages: 279,
-          image_url: "https://cdn.gramedia.com/uploads/items/9780451524935.jpg",
-          last_read: "15/03/2024",
-        },
-      ],
     },
   ]);
-
-  const handleLoginSuccess = () => {
-    setRoute("admin");
+  const [userRole, setUserRole] = useState(null);
+  const [userLoggedIn, setUserLoggedIn] = useState(null);
+  const handleLoginSuccess = (role) => {
+    setUserRole(role);
+    setRoute(role === "admin" ? "admin" : "userMenu");
   };
-
   return (
     <div>
       {route === "login" ? (
-        <LoginPage onLoginSuccess={handleLoginSuccess} />
-      ) : (
-        <AdminMenu books={books} setBooks={setBooks} users={users} setUsers={setUsers} />
-      )}
+        <LoginPage
+          onLoginSuccess={handleLoginSuccess}
+          users={users}
+          setUserLoggedIn={setUserLoggedIn}
+        />
+      ) : route === "admin" ? (
+        <AdminMenu
+          books={books}
+          users={users}
+          setBooks={setBooks}
+          setUsers={setUsers}
+          setRoute={setRoute}
+        />
+      ) : route === "userMenu" ? (
+        <LoginMenu
+          userLoggedIn={userLoggedIn}
+          users={users}
+          setUsers={setUsers}
+          setRoute={setRoute}
+          books={books}
+          setUsersBook={setUsersBook}
+          usersBook={usersBook}
+        />
+      ) : null}
     </div>
   );
 }

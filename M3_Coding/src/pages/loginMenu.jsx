@@ -1,11 +1,24 @@
-import datajson from "../assets/data.json";
 import logonavbar from "../assets/book.png";
 import Library from "../components/Library";
 import ForYou from "../components/ForYou";
 
-function loginMenu() {
-  const user_id = "0001";
-  const userData = datajson.find((user) => user.user.id === user_id);
+function LoginMenu({
+  userLoggedIn,
+  users,
+  setUsers,
+  setRoute,
+  books,
+  setUsersBook,
+  usersBook,
+}) {
+  const user_id = userLoggedIn.id; 
+  const getLastTwoBooks = (books) => {
+    if (!books || books.length === 0) return [];
+    const sortedBooks = books.sort((a, b) => new Date(b.last_read) - new Date(a.last_read));
+      return sortedBooks.slice(0, 2);
+  };
+
+  const lastTwoBooks = getLastTwoBooks(usersBook[user_id]);
 
   return (
     <>
@@ -35,40 +48,71 @@ function loginMenu() {
       </nav>
 
       <div className="container-fluid mt-4">
-        {userData ? (
+        {userLoggedIn ? (
           <>
+            <div className="d-flex justify-content-between align-items-center">
+              <h1 style={{ fontWeight: "700", marginLeft: "2.5vw" }}>
+                {userLoggedIn.username}#{userLoggedIn.id}
+              </h1>
+              <button
+                className="btn btn-danger"
+                style={{
+                  borderRadius: "10px",
+                  padding: "1vh 1vw",
+                  marginRight: "2.5vw",
+                }}
+                onClick={() => {
+                  setRoute("login");
+                }}
+              >
+                <h4>LOGOUT</h4>
+              </button>
+            </div>
+            <div
+              className="container-fluid"
+              style={{
+                paddingLeft: "3rem",
+                paddingRight: "3.5rem",
+                paddingTop: "2vh ",
+              }}
+            >
+            </div>
+
             <div className="container-fluid p-0 m-0">
               <h1
-                className="mb-4"
+                className="mt-4"
                 style={{ paddingLeft: "3rem", fontWeight: "bold" }}
               >
-                {userData.user.name} #{userData.user.id}
+                List Book
               </h1>
             </div>
+
             <div
               className="container-fluid"
               style={{ paddingLeft: "3rem", paddingRight: "3.5rem" }}
             >
-              <div className="container-fluid p-0 m-0">
-                {userData.library && userData.library.length > 0 ? (
-                  <div className="row">
-                    {userData.library.map((book) => (
-                      <Library
-                        key={book.id}
-                        imageUrl={book.image_url}
-                        title={book.title}
-                        author={book.author}
-                        lastRead={book.last_read}
-                        lastPage={book.last_pages}
-                        totalPage={book.total_pages}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <p>Tidak ditemukan buku</p>
-                )}
-              </div>
+              {lastTwoBooks && lastTwoBooks.length > 0 ? (
+                <div className="row">
+                  {lastTwoBooks.map((book) => (
+                    <Library
+                      key={book.id}
+                      imageUrl={book.image_url}
+                      title={book.title}
+                      author={book.author}
+                      lastRead={book.last_read}
+                      lastPage={book.last_pages}
+                      totalPage={book.total_pages}
+                      setUsersBook={setUsersBook}
+                      usersBook={usersBook}
+                      user_id={user_id}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p>Tidak ada buku yang ditemukan untuk pengguna ini</p>
+              )}
             </div>
+
             <div className="container-fluid p-0 m-0">
               <h1
                 className="mt-4"
@@ -78,33 +122,17 @@ function loginMenu() {
               </h1>
             </div>
             <div
-              className="containet-fluid"
+              className="container-fluid"
               style={{ paddingLeft: "3rem", paddingRight: "3.5rem" }}
             >
-              {userData.suggestion &&
-              userData.suggestion.length > 0 ? (
-                <div className="row">
-                  {userData.suggestion.map((recBook, index) => (
-                    <ForYou
-                      key={index}
-                      imageUrl={recBook.image_url}
-                      title={recBook.title}
-                      author={recBook.author}
-                      totalPage={recBook.pages}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <p>tidak ada buku rekomendasi untuk anda</p>
-              )}
             </div>
           </>
         ) : (
-          <p>user tidak ada</p>
+          <p>User tidak ada</p>
         )}
       </div>
     </>
   );
 }
 
-export default loginMenu;
+export default LoginMenu;

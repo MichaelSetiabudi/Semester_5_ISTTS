@@ -6,28 +6,51 @@ import Joi from "joi";
 const schema = Joi.object({
   title: Joi.string().min(5).max(100).required().label("Title"),
   author: Joi.string().min(5).max(50).required().label("Author"),
-  page: Joi.number().integer().min(20).max(5000).required().label("Page"),
-  imageUrl: Joi.string().min(10).max(255).required().label("Image Link"),
+  total_pages: Joi.number().integer().min(20).max(5000).required().label("Page"),
+  image_url: Joi.string().min(10).max(255).required().label("Image Link"),
 });
 
-function AddBooks({ onAddBook }) {
+function AddBooks({ books, setBooks, setActivePage }) {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm({
     resolver: joiResolver(schema),
   });
 
   const onSubmit = (data) => {
-    onAddBook(data);
-    reset();
+    const newBook = {
+      ...data,
+      id: getNextId(), // Get the next ID based on existing books
+      day_added: new Date()
+        .toLocaleString("en-GB", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })
+        .replace(",", ""),
+    };
+    setBooks([...books, newBook]);
+    setActivePage("home");
+  };
+
+  const getNextId = () => {
+    let maxId = 0; // Initialize maxId to 0
+    for (const book of books) {
+      if (book.id > maxId) {
+        maxId = book.id; // Update maxId if current book's ID is higher
+      }
+    }
+    return maxId + 1; // Return the next ID
   };
 
   return (
     <div style={{ padding: "2rem", maxWidth: "400px" }}>
-      <h1 style={{ fontWeight: "700" }}>Admin</h1>
+      <h1 style={{ fontWeight: "700" }}>Add Book</h1>
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column" }}>
         <input
           type="text"
@@ -58,7 +81,7 @@ function AddBooks({ onAddBook }) {
         <input
           type="number"
           placeholder="Page"
-          {...register("page")}
+          {...register("total_pages")}
           style={{
             padding: "0.5rem",
             marginBottom: "1rem",
@@ -66,12 +89,12 @@ function AddBooks({ onAddBook }) {
             border: "1px solid black",
           }}
         />
-        {errors.page && <p style={{ color: "red" }}>{errors.page.message}</p>}
+        {errors.total_pages && <p style={{ color: "red" }}>{errors.total_pages.message}</p>}
 
         <input
           type="text"
           placeholder="Image Link"
-          {...register("imageUrl")}
+          {...register("image_url")}
           style={{
             padding: "0.5rem",
             marginBottom: "1rem",
@@ -79,19 +102,21 @@ function AddBooks({ onAddBook }) {
             border: "1px solid black",
           }}
         />
-        {errors.imageUrl && <p style={{ color: "red" }}>{errors.imageUrl.message}</p>}
+        {errors.image_url && <p style={{ color: "red" }}>{errors.image_url.message}</p>}
 
         <button
           type="submit"
           style={{
-            backgroundColor: "#90EE90",
-            padding: "0.5rem",
-            border: "none",
+            backgroundColor: "#F66B6B",
+            color: "white",
+            padding: "0.7rem",
             borderRadius: "8px",
+            border: "none",
             fontWeight: "bold",
+            cursor: "pointer",
           }}
         >
-          ADD
+          Add Book
         </button>
       </form>
     </div>

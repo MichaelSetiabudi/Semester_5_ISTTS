@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-function ForYou({ imageUrl, title, author, totalPage }) {
+function ForYou({ imageUrl, title, author, totalPage,}) {
     return (
       <div className="col-6 col-md-4 col-lg-2 mb-4 d-flex" style={{ alignItems: "stretch", flex: "0 0 20%", marginTop:"2vh"}}>
         <div className="card text-center p-3 d-flex flex-column" style={{ backgroundColor: "#FFE5E5", borderRadius: "10px", flexGrow: 1 }}>

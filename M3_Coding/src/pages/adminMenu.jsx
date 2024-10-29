@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import datajson from "../assets/data.json";
 import logonavbar from "../assets/book.png";
 import Library from "../components/adminLibrary";
 import ListUser from "../components/listUser";
 import AddBooks from "../components/addBooks";
+import AddUsers from "../components/addUsers";
 
-function AdminMenu({ books, setBooks, users, setUsers }) {
-  const user_id = "0001";
-  const userData = datajson.find((user) => user.user.id === user_id);
+function AdminMenu({ books = [], setBooks, users = [], setUsers ,setRoute}) {
 
   const [bookSearch, setBookSearch] = useState("");
   const [userSearch, setUserSearch] = useState("");
@@ -15,13 +13,14 @@ function AdminMenu({ books, setBooks, users, setUsers }) {
 
   const filteredBooks = books.filter(
     (book) =>
-      book.title.toLowerCase().includes(bookSearch.toLowerCase()) ||
-      book.author.toLowerCase().includes(bookSearch.toLowerCase())
+      book.title?.toLowerCase().includes(bookSearch.toLowerCase()) ||
+      book.author?.toLowerCase().includes(bookSearch.toLowerCase())
   );
+
   const filteredUsers = users.filter(
     (user) =>
-      user.username.toLowerCase().includes(userSearch.toLowerCase()) ||
-      user.email.toLowerCase().includes(userSearch.toLowerCase())
+      user.username?.toLowerCase().includes(userSearch.toLowerCase()) ||
+      user.email?.toLowerCase().includes(userSearch.toLowerCase())
   );
 
   return (
@@ -34,11 +33,7 @@ function AdminMenu({ books, setBooks, users, setUsers }) {
         }}
       >
         <div className="container-fluid d-flex align-items-center">
-          <a
-            className="navbar-brand d-flex align-items-center"
-            href="#"
-            style={{ color: "white", fontWeight: "bold" }}
-          >
+          <a className="navbar-brand d-flex align-items-center" href="#" style={{ color: "white", fontWeight: "bold" }}>
             <img
               src={logonavbar}
               alt="Logo"
@@ -46,48 +41,16 @@ function AdminMenu({ books, setBooks, users, setUsers }) {
               height="auto"
               className="d-inline-block align-text-top m-0 p-0"
             />
-            <span
-              style={{
-                fontSize: "calc(12px + 1vw)",
-                marginLeft: "0.5rem",
-                marginRight: "3vw",
-              }}
-            >
+            <span style={{ fontSize: "calc(12px + 1vw)", marginLeft: "0.5rem", marginRight: "3vw" }}>
               LKOMP LIBRARY
             </span>
-            <a
-              href="#"
-              style={{
-                color: "white",
-                fontWeight: "bold",
-                textDecoration: activePage === "home" ? "underline" : "none",
-                marginRight: "3vw",
-              }}
-              onClick={() => setActivePage("home")}
-            >
+            <a href="#" style={{ color: "white", fontWeight: "bold", textDecoration: activePage === "home" ? "underline" : "none", marginRight: "3vw" }} onClick={() => setActivePage("home")}>
               Home
             </a>
-            <a
-              href="#"
-              style={{
-                color: "white",
-                fontWeight: "bold",
-                textDecoration: activePage === "addBook" ? "underline" : "none",
-                marginRight: "3vw",
-              }}
-              onClick={() => setActivePage("addBook")}
-            >
+            <a href="#" style={{ color: "white", fontWeight: "bold", textDecoration: activePage === "addBooks" ? "underline" : "none", marginRight: "3vw" }} onClick={() => setActivePage("addBooks")}>
               Add Book
             </a>
-            <a
-              href="#"
-              style={{
-                color: "white",
-                fontWeight: "bold",
-                textDecoration: activePage === "addUser" ? "underline" : "none",
-              }}
-              onClick={() => setActivePage("addUser")}
-            >
+            <a href="#" style={{ color: "white", fontWeight: "bold", textDecoration: activePage === "addUser" ? "underline" : "none" }} onClick={() => setActivePage("addUser")}>
               Add User
             </a>
           </a>
@@ -103,22 +66,20 @@ function AdminMenu({ books, setBooks, users, setUsers }) {
                 className="btn btn-danger"
                 style={{
                   borderRadius: "10px",
-                  padding: "0 1vw",
+                  padding: "1vh 1vw",
                   marginRight: "1vw",
                 }}
+                onClick={()=>{setRoute("login")}}
               >
                 <h4>LOGOUT</h4>
               </button>
             </div>
-            <div
-              className="container-fluid"
-              style={{ marginLeft: "1vw", marginRight: "5vw" }}
-            >
-              <div className="justify-content-between align-items-center mt-4 mb-3">
+            <div className="container-fluid" >
+              <div className="justify-content-between align-items-center mt-4 mb-4" style={{marginLeft:"1vw"}}>
                 <h1 style={{ fontWeight: "700" }}>List Book</h1>
                 <input
                   style={{
-                    width: "90%",
+                    width: "92%",
                     borderRadius: "8px",
                     height: "3vh",
                     padding: "5px",
@@ -129,33 +90,31 @@ function AdminMenu({ books, setBooks, users, setUsers }) {
                   onChange={(e) => setBookSearch(e.target.value)}
                 />
               </div>
-              <div className="container-fluid" style={{ paddingRight: "1rem" }}>
-                <div className="row" style={{ paddingRight: "5.3vw" }}>
-                  {filteredBooks.length > 0 ? (
-                    filteredBooks.map((book) => (
-                      <Library
-                        key={book.id}
-                        imageUrl={book.image_url}
-                        title={book.title}
-                        author={book.author}
-                        totalPage={book.total_pages}
-                      />
-                    ))
-                  ) : (
-                    <p>Tidak ditemukan buku</p>
-                  )}
-                </div>
+              <div className="row" style={{width:"92%",marginLeft:"1vw"}}>
+                {filteredBooks.length > 0 ? (
+                  filteredBooks.map((book) => (
+                    <Library
+                      key={book.id}
+                      imageUrl={book.image_url}
+                      title={book.title}
+                      author={book.author}
+                      totalPage={book.total_pages}
+                      onDelete={() => {
+                        setBooks(books.filter((b) => b.id !== book.id));
+                      }}
+                    />
+                  ))
+                ) : (
+                  <p>Tidak ditemukan buku</p>
+                )}
               </div>
             </div>
-            <div
-              className="container-fluid bg-warning"
-              style={{ marginLeft: "1vw", marginRight: "5vw" }}
-            >
-              <div className="justify-content-between align-items-center mt-4 mb-3">
+            <div className="container-fluid">
+              <div className="justify-content-between align-items-center mt-4 mb-3"style={{marginLeft:"1vw"}}>
                 <h1 style={{ fontWeight: "700" }}>List User</h1>
                 <input
                   style={{
-                    width: "90%",
+                    width: "92%",
                     borderRadius: "8px",
                     height: "3vh",
                     padding: "5px",
@@ -166,27 +125,30 @@ function AdminMenu({ books, setBooks, users, setUsers }) {
                   onChange={(e) => setUserSearch(e.target.value)}
                 />
               </div>
-              <div className="container-fluid" style={{ paddingRight: "1rem" }}>
-                <div className="row" style={{ paddingRight: "5.3vw" }}>
-                  {filteredUsers.length > 0 ? (
-                    filteredUsers.map((u) => (
-                      <ListUser
-                        key={u.id}
-                        username={u.username}
-                        email={u.email}
-                        join_at={u.join_at}
-                      />
-                    ))
-                  ) : (
-                    <p>Tidak ditemukan user</p>
-                  )}
-                </div>
+              <div className="row" style={{width:"92%",marginLeft:"1vw"}}>
+                {filteredUsers.length > 0 ? (
+                  filteredUsers.map((u) => (
+                    <ListUser
+                      key={u.id}
+                      username={u.username}
+                      email={u.email}
+                      join_at={u.join_at}
+                      onDelete={() => {
+                        setUsers(users.filter((user) => user.id !== u.id)); 
+                      }}
+                    />
+                  ))
+                ) : (
+                  <p>Tidak ditemukan user</p>
+                )}
               </div>
             </div>
           </>
-        ) : (
-          <AddBooks books={books} setBooks={setBooks}></AddBooks>
-        )}
+        ) : activePage === "addBooks" ? (
+          <AddBooks books={books} setBooks={setBooks} setActivePage={setActivePage} />
+        ) : activePage === "addUser" ? (
+          <AddUsers users={users} setUsers={setUsers} setActivePage={setActivePage} />
+        ) : null}
       </div>
     </>
   );

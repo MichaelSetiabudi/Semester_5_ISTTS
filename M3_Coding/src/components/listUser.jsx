@@ -1,8 +1,8 @@
 import React from "react";
 
-function ListUser({ username, email, join_at }) {
+function ListUser({ username, email, join_at, onDelete }) {
   const userCardStyle = {
-    backgroundColor: "#f8d7da", // light red tone
+    backgroundColor: "#f8d7da",
     padding: "1rem",
     borderRadius: "8px",
     margin: "0.5rem 0",
@@ -32,8 +32,8 @@ function ListUser({ username, email, join_at }) {
         <span>{email}</span>
       </div>
       <div>
-        <span style={{marginRight:"2vw"}}>Join at {join_at}</span>
-        <button style={deleteButtonStyle}>DELETE</button>
+        <span style={{ marginRight: "2vw" }}>Join at {join_at}</span>
+        <button style={deleteButtonStyle} onClick={onDelete}>DELETE</button>
       </div>
     </div>
   );

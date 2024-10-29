@@ -1,6 +1,6 @@
 import React from "react";
 
-function AdminLibrary({ imageUrl, title, author, totalPage }) {
+function AdminLibrary({ imageUrl, title, author, totalPage, onDelete }) {
   return (
     <div
       className="col-6 col-md-4 col-lg-2 mb-4" 
@@ -34,7 +34,7 @@ function AdminLibrary({ imageUrl, title, author, totalPage }) {
             className="card-title"
             style={{
               fontWeight: "bold",
-              fontSize: "1.2rem", // Increased font size for the title
+              fontSize: "1.2rem",
               marginBottom: "0.5rem",
             }}
           >
@@ -43,7 +43,7 @@ function AdminLibrary({ imageUrl, title, author, totalPage }) {
           <p
             className="card-text"
             style={{
-              fontSize: "1rem", // Increased font size for the author
+              fontSize: "1rem",
               color: "#555",
               marginBottom: "0.5rem",
             }}
@@ -54,7 +54,7 @@ function AdminLibrary({ imageUrl, title, author, totalPage }) {
             className="card-text"
             style={{
               fontWeight: "bold",
-              fontSize: "1rem", // Increased font size for the total pages
+              fontSize: "1rem",
               marginBottom: "1rem",
             }}
           >
@@ -71,6 +71,7 @@ function AdminLibrary({ imageUrl, title, author, totalPage }) {
               cursor: "pointer",
               color: "white",
             }}
+            onClick={onDelete} // Call the delete function when clicked
           >
             DELETE
           </button>
