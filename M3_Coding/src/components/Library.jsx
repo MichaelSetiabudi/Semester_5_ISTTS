@@ -14,15 +14,13 @@ function Library({
   const [editableLastPage, setEditableLastPage] = useState(lastPage);
   const progress = totalPage > 0 ? (editableLastPage / totalPage) * 100 : 0;
   const isFinished = editableLastPage >= totalPage;
-
-  // Function to get today's date in "DD/MM/YYYY HH:MM" format for storage but display only "DD/MM/YYYY"
   const getTodayDate = () => {
     const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0");
     const year = today.getFullYear();
-    const hours = String(today.getHours()).padStart(2, '0');
-    const minutes = String(today.getMinutes()).padStart(2, '0');
+    const hours = String(today.getHours()).padStart(2, "0");
+    const minutes = String(today.getMinutes()).padStart(2, "0");
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
 
@@ -44,8 +42,6 @@ function Library({
       };
     });
   };
-
-  
 
   return (
     <div className="col-12 mb-4">
