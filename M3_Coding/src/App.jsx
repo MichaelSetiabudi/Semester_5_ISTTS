@@ -193,6 +193,24 @@ function App() {
       total_pages: 328,
       day_added: "2023-03-10T11:00:00",
     },
+    {
+      id: 5,
+      title: "The Phantom of the Opera",
+      author: "Gaston Leroux",
+      image_url:
+        "https://m.media-amazon.com/images/M/MV5BNDczNzg4OTM3MV5BMl5BanBnXkFtZTcwOTQzMTEzMw@@._V1_.jpg",
+      total_pages: 190,
+      day_added: "2023-02-10T11:00:00",
+    },
+    {
+      id: 6,
+      title: "The Alchemist",
+      author: "Paulo Coelho",
+      image_url:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhM2P-YDSJ1CTvekqJ29Nepvn69q6evyipFg&s",
+      total_pages: 208,
+      day_added: "2022-02-10T11:00:00",
+    },
   ]);
   const [usersBook, setUsersBook] = useState({
     "0001": [

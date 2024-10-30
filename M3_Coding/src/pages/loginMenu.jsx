@@ -17,8 +17,16 @@ function LoginMenu({
     const sortedBooks = books.sort((a, b) => new Date(b.last_read) - new Date(a.last_read));
       return sortedBooks.slice(0, 2);
   };
-
+  const getRecentBooks = (books) => {
+    if (!books || books.length === 0) return [];
+    const sortedBooks = books.sort((a, b) => new Date(b.day_added) - new Date(a.day_added));
+    return sortedBooks.slice(0, 5); // Get the 5 most recently added books
+  };
   const lastTwoBooks = getLastTwoBooks(usersBook[user_id]);
+
+  
+
+  const recentBooks = getRecentBooks(books);
 
   return (
     <>
@@ -121,10 +129,18 @@ function LoginMenu({
                 For You
               </h1>
             </div>
-            <div
-              className="container-fluid"
-              style={{ paddingLeft: "3rem", paddingRight: "3.5rem" }}
-            >
+            <div className="container-fluid" style={{ paddingLeft: "3rem", paddingRight: "3.5rem" }}>
+              <div className="row">
+                {recentBooks.map((book) => (
+                  <ForYou
+                    key={book.id}
+                    imageUrl={book.image_url}
+                    title={book.title}
+                    author={book.author}
+                    totalPage={book.total_pages}
+                  />
+                ))}
+              </div>
             </div>
           </>
         ) : (

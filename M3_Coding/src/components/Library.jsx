@@ -15,26 +15,37 @@ function Library({
   const progress = totalPage > 0 ? (editableLastPage / totalPage) * 100 : 0;
   const isFinished = editableLastPage >= totalPage;
 
+  // Function to get today's date in "DD/MM/YYYY HH:MM" format for storage but display only "DD/MM/YYYY"
+  const getTodayDate = () => {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    const hours = String(today.getHours()).padStart(2, '0');
+    const minutes = String(today.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
+
   const handleLastPageChange = (e) => {
     let value = e.target.value.replace(/\D/g, "");
     value = Math.max(0, Math.min(totalPage, Number(value)));
     setEditableLastPage(value);
 
-    if (userLoggedIn && users.length > 0) {
-      const updatedUsers = users.map((user) => {
-        if (user.username === userLoggedIn.username) {
-          return {
-            ...user,
-            my_books: user.my_books.map((book) =>
-              book.title === title ? { ...book, lastPage: value } : book
-            ),
-          };
-        }
-        return user;
-      });
-      setUsers(updatedUsers); // Save updated users state
-    }
+    // Update usersBook with the new lastPage and last_read
+    setUsersBook((prevUsersBook) => {
+      const updatedBooks = prevUsersBook[user_id]?.map((book) =>
+        book.title === title
+          ? { ...book, last_pages: value, last_read: getTodayDate() }
+          : book
+      );
+      return {
+        ...prevUsersBook,
+        [user_id]: updatedBooks,
+      };
+    });
   };
+
+  
 
   return (
     <div className="col-12 mb-4">
@@ -113,7 +124,7 @@ function Library({
                   padding: "0",
                 }}
               >
-                Read from {lastRead}
+                Read from {lastRead.split(" ")[0]}
               </h3>
             </div>
           </div>
