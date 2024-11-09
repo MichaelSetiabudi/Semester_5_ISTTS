@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React from "react";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -22,6 +23,7 @@ const schema = Joi.object({
     }),
 });
 
+// eslint-disable-next-line react/prop-types
 function AddUsers({ users, setUsers, setActivePage }) {
   const {
     register,
@@ -34,7 +36,7 @@ function AddUsers({ users, setUsers, setActivePage }) {
   const onSubmit = (data) => {
     const newUser = {
       ...data,
-      id: getNextId(), // Get the next ID based on existing users
+      id: getNextId(),
       join_at: formatDate(new Date()),
     };
     setUsers([...users, newUser]);
@@ -125,6 +127,7 @@ function AddUsers({ users, setUsers, setActivePage }) {
   );
 }
 
+// eslint-disable-next-line react/prop-types
 const ErrorMessage = ({ message }) => <p style={{ color: "red" }}>{message}</p>;
 
 export default AddUsers;

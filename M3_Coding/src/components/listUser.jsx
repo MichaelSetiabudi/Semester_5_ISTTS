@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React from "react";
 
 function ListUser({ username, email, join_at, onDelete }) {

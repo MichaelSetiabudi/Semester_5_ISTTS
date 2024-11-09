@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 
 function Library({
@@ -29,7 +31,6 @@ function Library({
     value = Math.max(0, Math.min(totalPage, Number(value)));
     setEditableLastPage(value);
 
-    // Update usersBook with the new lastPage and last_read
     setUsersBook((prevUsersBook) => {
       const updatedBooks = prevUsersBook[user_id]?.map((book) =>
         book.title === title

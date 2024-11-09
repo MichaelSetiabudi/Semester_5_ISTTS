@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -10,6 +11,7 @@ const schema = Joi.object({
   image_url: Joi.string().min(10).max(255).required().label("Image Link"),
 });
 
+// eslint-disable-next-line react/prop-types
 function AddBooks({ books, setBooks, setActivePage }) {
   const {
     register,
@@ -22,7 +24,7 @@ function AddBooks({ books, setBooks, setActivePage }) {
   const onSubmit = (data) => {
     const newBook = {
       ...data,
-      id: getNextId(), // Get the next ID based on existing books
+      id: getNextId(), 
       day_added: new Date()
         .toLocaleString("en-GB", {
           year: "numeric",
@@ -39,13 +41,13 @@ function AddBooks({ books, setBooks, setActivePage }) {
   };
 
   const getNextId = () => {
-    let maxId = 0; // Initialize maxId to 0
+    let maxId = 0; 
     for (const book of books) {
       if (book.id > maxId) {
-        maxId = book.id; // Update maxId if current book's ID is higher
+        maxId = book.id; 
       }
     }
-    return maxId + 1; // Return the next ID
+    return maxId + 1; 
   };
 
   return (

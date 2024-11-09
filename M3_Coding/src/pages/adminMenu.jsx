@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import logonavbar from "../assets/book.png";
 import Library from "../components/adminLibrary";
@@ -5,6 +6,7 @@ import ListUser from "../components/listUser";
 import AddBooks from "../components/addBooks";
 import AddUsers from "../components/addUsers";
 
+// eslint-disable-next-line react/prop-types
 function AdminMenu({ books = [], setBooks, users = [], setUsers ,setRoute}) {
 
   const [bookSearch, setBookSearch] = useState("");

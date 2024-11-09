@@ -1,7 +1,10 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import logonavbar from "../assets/book.png";
 import Library from "../components/Library";
 import ForYou from "../components/ForYou";
 import { useState } from "react";
+import UserLibrary from "../components/UserLibrary";
 
 function LoginMenu({
   userLoggedIn,
@@ -14,23 +17,34 @@ function LoginMenu({
 }) {
   const user_id = userLoggedIn.id;
   const [bookSearch, setBookSearch] = useState("");
+  const [myBookSearch, setMyBookSearch] = useState("");
 
   const getLastTwoBooks = (books) => {
     if (!books || books.length === 0) return [];
     const sortedBooks = [...books].sort(
+      (a, b) => new Date(a.last_read) - new Date(b.last_read)
+    );
+    return sortedBooks.slice(-2);
+  };
+  
+
+  const getAllBooksSortedByLastRead = (books) => {
+    if (!books || books.length === 0) return [];
+    return [...books].sort(
       (a, b) => new Date(b.last_read) - new Date(a.last_read)
     );
-    return sortedBooks.slice(0, 2);
   };
 
   const getRecentBooks = (books) => {
     if (!books || books.length === 0) return [];
     const sortedBooks = [...books].sort(
-      (a, b) => new Date(b.day_added) - new Date(a.day_added)
+      (a, b) => new Date(a.day_added) - new Date(b.day_added)
     );
-    return sortedBooks.slice(0, 5);
+    return sortedBooks.slice(-5);
   };
+  
 
+  const allUsersBook = getAllBooksSortedByLastRead(usersBook[user_id]);
   const lastTwoBooks = getLastTwoBooks(usersBook[user_id]);
   const recentBooks = getRecentBooks(books);
   const [activePage, setActivePage] = useState("home");
@@ -42,6 +56,13 @@ function LoginMenu({
           book.author.toLowerCase().includes(bookSearch.toLowerCase())
       )
     : books;
+  const filteredmyBooks = myBookSearch
+    ? allUsersBook.filter(
+        (book) =>
+          book.title.toLowerCase().includes(myBookSearch.toLowerCase()) ||
+          book.author.toLowerCase().includes(myBookSearch.toLowerCase())
+      )
+    : allUsersBook;
 
   return (
     <>
@@ -97,11 +118,12 @@ function LoginMenu({
               style={{
                 color: "white",
                 fontWeight: "bold",
-                textDecoration: activePage === "addUser" ? "underline" : "none",
+                textDecoration:
+                  activePage === "myLibrary" ? "underline" : "none",
               }}
-              onClick={() => setActivePage("addUser")}
+              onClick={() => setActivePage("myLibrary")}
             >
-              Add User
+              My Library
             </a>
           </a>
         </div>
@@ -196,7 +218,10 @@ function LoginMenu({
 
             {activePage === "library" && (
               <>
-                <div className="container-fluid" style={{marginTop:"3vh", marginLeft:"2vw"}}>
+                <div
+                  className="container-fluid"
+                  style={{ marginTop: "3vh", marginLeft: "2vw" }}
+                >
                   <input
                     style={{
                       width: "90%",
@@ -210,17 +235,63 @@ function LoginMenu({
                     value={bookSearch}
                     onChange={(e) => setBookSearch(e.target.value)}
                   />
-                  <div className="row" style={{width:"91%"}}>
+                  <div className="row" style={{ width: "91%" }}>
                     {filteredBooks.map((book) => (
-                      <ForYou
+                      <UserLibrary
                         key={book.id}
                         imageUrl={book.image_url}
                         title={book.title}
                         author={book.author}
                         totalPage={book.total_pages}
+                        user_id={user_id}
+                        usersBook={usersBook}
+                        setUsersBook={setUsersBook}
                       />
                     ))}
                   </div>
+                </div>
+              </>
+            )}
+
+            {activePage === "myLibrary" && (
+              <>
+                <div
+                  className="container-fluid"
+                  style={{ paddingLeft: "3rem", paddingRight: "3.5rem" }}
+                >
+                  <input
+                    style={{
+                      width: "90%",
+                      borderRadius: "8px",
+                      height: "3vh",
+                      padding: "5px",
+                      marginBottom: "1rem",
+                    }}
+                    type="text"
+                    placeholder="Search by title or author"
+                    value={myBookSearch}
+                    onChange={(e) => setMyBookSearch(e.target.value)}
+                  />
+                  {filteredmyBooks && filteredmyBooks.length > 0 ? (
+                    <div className="row">
+                      {filteredmyBooks.map((book) => (
+                        <Library
+                          key={book.id}
+                          imageUrl={book.image_url}
+                          title={book.title}
+                          author={book.author}
+                          lastRead={book.last_read}
+                          lastPage={book.last_pages}
+                          totalPage={book.total_pages}
+                          setUsersBook={setUsersBook}
+                          usersBook={usersBook}
+                          user_id={user_id}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <p>Tidak ada buku ditemukan untuk pengguna ini</p>
+                  )}
                 </div>
               </>
             )}

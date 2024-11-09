@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import AdminMenu from "./pages/adminMenu";
 import LoginMenu from "./pages/loginMenu";

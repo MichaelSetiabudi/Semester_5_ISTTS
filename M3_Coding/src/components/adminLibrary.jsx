@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+// eslint-disable-next-line no-unused-vars
 import React from "react";
 
 function AdminLibrary({ imageUrl, title, author, totalPage, onDelete }) {
@@ -71,7 +73,7 @@ function AdminLibrary({ imageUrl, title, author, totalPage, onDelete }) {
               cursor: "pointer",
               color: "white",
             }}
-            onClick={onDelete} // Call the delete function when clicked
+            onClick={onDelete} 
           >
             DELETE
           </button>
