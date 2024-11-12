@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React from "react";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -23,43 +22,54 @@ const schema = Joi.object({
     }),
 });
 
-// eslint-disable-next-line react/prop-types
-function AddUsers({ users, setUsers, setActivePage }) {
+function AddUsers({ fetchUsers, setActivePage }) {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm({
     resolver: joiResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    const newUser = {
-      ...data,
-      id: getNextId(),
-      join_at: formatDate(new Date()),
-    };
-    setUsers([...users, newUser]);
-    setActivePage("home");
-  };
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch('http://localhost:3000/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
-  const getNextId = () => {
-    let maxId = 0;
-    for (const user of users) {
-      const numericId = parseInt(user.id, 10);
-      if (numericId > maxId) {
-        maxId = numericId;
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (errorData.field) {
+          // If the backend specifies which field had an error
+          setError(errorData.field, {
+            type: 'manual',
+            message: errorData.message,
+          });
+        } else {
+          // Generic error handling
+          setError('root.serverError', {
+            type: 'manual',
+            message: errorData.message || 'An error occurred while adding the user.',
+          });
+        }
+        return;
       }
-    }
-    const nextId = (maxId + 1).toString().padStart(4, '0');
-    return nextId;
-  };
 
-  const formatDate = (date) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
+      // If successful, refresh the users list and navigate back
+      await fetchUsers();
+      setActivePage("home");
+    } catch (error) {
+      console.error('Error adding user:', error);
+      setError('root.serverError', {
+        type: 'manual',
+        message: 'An error occurred while adding the user. Please try again.',
+      });
+    }
   };
 
   return (
@@ -69,6 +79,10 @@ function AddUsers({ users, setUsers, setActivePage }) {
         onSubmit={handleSubmit(onSubmit)}
         style={{ display: "flex", flexDirection: "column" }}
       >
+        {errors.root?.serverError && (
+          <ErrorMessage message={errors.root.serverError.message} />
+        )}
+
         <input
           type="text"
           placeholder="Email"
@@ -127,7 +141,6 @@ function AddUsers({ users, setUsers, setActivePage }) {
   );
 }
 
-// eslint-disable-next-line react/prop-types
 const ErrorMessage = ({ message }) => <p style={{ color: "red" }}>{message}</p>;
 
 export default AddUsers;

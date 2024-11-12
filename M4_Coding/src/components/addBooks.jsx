@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from "react";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -11,49 +10,68 @@ const schema = Joi.object({
   image_url: Joi.string().min(10).max(255).required().label("Image Link"),
 });
 
-// eslint-disable-next-line react/prop-types
-function AddBooks({ books, setBooks, setActivePage }) {
+function AddBooks({ fetchBooks, setActivePage }) {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm({
     resolver: joiResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    const newBook = {
-      ...data,
-      id: getNextId(), 
-      day_added: new Date()
-        .toLocaleString("en-GB", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        })
-        .replace(",", ""),
-    };
-    setBooks([...books, newBook]);
-    setActivePage("home");
-  };
+  const onSubmit = async (data) => {
+    try {
+      const bookData = {
+        ...data,
+        total_pages: parseInt(data.total_pages, 10)
+      };
 
-  const getNextId = () => {
-    let maxId = 0; 
-    for (const book of books) {
-      if (book.id > maxId) {
-        maxId = book.id; 
+      const response = await fetch('http://localhost:3000/api/books', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (errorData.field) {
+          setError(errorData.field, {
+            type: 'manual',
+            message: errorData.message,
+          });
+        } else {
+          setError('root.serverError', {
+            type: 'manual',
+            message: errorData.message || 'An error occurred while adding the book.',
+          });
+        }
+        return;
       }
+
+      await fetchBooks();
+      setActivePage("home");
+    } catch (error) {
+      console.error('Error adding book:', error);
+      setError('root.serverError', {
+        type: 'manual',
+        message: 'An error occurred while adding the book. Please try again.',
+      });
     }
-    return maxId + 1; 
   };
 
   return (
     <div style={{ padding: "2rem", maxWidth: "400px" }}>
       <h1 style={{ fontWeight: "700" }}>Add Book</h1>
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column" }}>
+        {errors.root?.serverError && (
+          <p style={{ color: "red", marginBottom: "1rem" }}>
+            {errors.root.serverError.message}
+          </p>
+        )}
+
         <input
           type="text"
           placeholder="Title"

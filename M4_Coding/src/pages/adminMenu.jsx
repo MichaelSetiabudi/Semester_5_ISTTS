@@ -1,24 +1,66 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logonavbar from "../assets/book.png";
 import Library from "../components/adminLibrary";
 import ListUser from "../components/listUser";
 import AddBooks from "../components/addBooks";
 import AddUsers from "../components/addUsers";
 
-// eslint-disable-next-line react/prop-types
-function AdminMenu({ books = [], setBooks, users = [], setUsers ,setRoute}) {
-
+function AdminMenu({ setRoute }) {
+  const [books, setBooks] = useState([]);
+  const [users, setUsers] = useState([]);
   const [bookSearch, setBookSearch] = useState("");
   const [userSearch, setUserSearch] = useState("");
   const [activePage, setActivePage] = useState("home");
 
+  // Fetch books and users on component mount
+  useEffect(() => {
+    fetchBooks();
+    fetchUsers();
+  }, []);
+
+  // Fetch books from API
+  const fetchBooks = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/books');
+      const data = await response.json();
+      setBooks(data);
+    } catch (error) {
+      console.error('Error fetching books:', error);
+    }
+  };
+
+  // Fetch users from API
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/users');
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  // Handle book deletion
+  const handleDeleteBook = async (bookId) => {
+    try {
+      await fetch(`http://localhost:3000/api/books/${bookId}`, {
+        method: 'DELETE',
+      });
+      // Refresh books list after deletion
+      fetchBooks();
+    } catch (error) {
+      console.error('Error deleting book:', error);
+    }
+  };
+
+  // Filter books based on search
   const filteredBooks = books.filter(
     (book) =>
       book.title?.toLowerCase().includes(bookSearch.toLowerCase()) ||
       book.author?.toLowerCase().includes(bookSearch.toLowerCase())
   );
 
+  // Filter users based on search
   const filteredUsers = users.filter(
     (user) =>
       user.username?.toLowerCase().includes(userSearch.toLowerCase()) ||
@@ -71,13 +113,13 @@ function AdminMenu({ books = [], setBooks, users = [], setUsers ,setRoute}) {
                   padding: "1vh 1vw",
                   marginRight: "1vw",
                 }}
-                onClick={()=>{setRoute("login")}}
+                onClick={() => setRoute("login")}
               >
                 <h4>LOGOUT</h4>
               </button>
             </div>
-            <div className="container-fluid" >
-              <div className="justify-content-between align-items-center mt-4 mb-4" style={{marginLeft:"1vw"}}>
+            <div className="container-fluid">
+              <div className="justify-content-between align-items-center mt-4 mb-4" style={{ marginLeft: "1vw" }}>
                 <h1 style={{ fontWeight: "700" }}>List Book</h1>
                 <input
                   style={{
@@ -92,7 +134,7 @@ function AdminMenu({ books = [], setBooks, users = [], setUsers ,setRoute}) {
                   onChange={(e) => setBookSearch(e.target.value)}
                 />
               </div>
-              <div className="row" style={{width:"92%",marginLeft:"1vw"}}>
+              <div className="row" style={{ width: "92%", marginLeft: "1vw" }}>
                 {filteredBooks.length > 0 ? (
                   filteredBooks.map((book) => (
                     <Library
@@ -101,9 +143,7 @@ function AdminMenu({ books = [], setBooks, users = [], setUsers ,setRoute}) {
                       title={book.title}
                       author={book.author}
                       totalPage={book.total_pages}
-                      onDelete={() => {
-                        setBooks(books.filter((b) => b.id !== book.id));
-                      }}
+                      onDelete={() => handleDeleteBook(book.id)}
                     />
                   ))
                 ) : (
@@ -112,7 +152,7 @@ function AdminMenu({ books = [], setBooks, users = [], setUsers ,setRoute}) {
               </div>
             </div>
             <div className="container-fluid">
-              <div className="justify-content-between align-items-center mt-4 mb-3"style={{marginLeft:"1vw"}}>
+              <div className="justify-content-between align-items-center mt-4 mb-3" style={{ marginLeft: "1vw" }}>
                 <h1 style={{ fontWeight: "700" }}>List User</h1>
                 <input
                   style={{
@@ -127,16 +167,16 @@ function AdminMenu({ books = [], setBooks, users = [], setUsers ,setRoute}) {
                   onChange={(e) => setUserSearch(e.target.value)}
                 />
               </div>
-              <div className="row" style={{width:"92%",marginLeft:"1vw"}}>
+              <div className="row" style={{ width: "92%", marginLeft: "1vw" }}>
                 {filteredUsers.length > 0 ? (
-                  filteredUsers.map((u) => (
+                  filteredUsers.map((user) => (
                     <ListUser
-                      key={u.id}
-                      username={u.username}
-                      email={u.email}
-                      join_at={u.join_at}
+                      key={user.id}
+                      username={user.username}
+                      email={user.email}
+                      join_at={user.join_at}
                       onDelete={() => {
-                        setUsers(users.filter((user) => user.id !== u.id)); 
+                        setUsers(users.filter((u) => u.id !== user.id));
                       }}
                     />
                   ))
@@ -147,9 +187,9 @@ function AdminMenu({ books = [], setBooks, users = [], setUsers ,setRoute}) {
             </div>
           </>
         ) : activePage === "addBooks" ? (
-          <AddBooks books={books} setBooks={setBooks} setActivePage={setActivePage} />
+          <AddBooks fetchBooks={fetchBooks} setActivePage={setActivePage} />
         ) : activePage === "addUser" ? (
-          <AddUsers users={users} setUsers={setUsers} setActivePage={setActivePage} />
+          <AddUsers fetchUsers={fetchUsers} setActivePage={setActivePage} />
         ) : null}
       </div>
     </>

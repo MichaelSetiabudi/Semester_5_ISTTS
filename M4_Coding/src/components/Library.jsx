@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function Library({
   imageUrl,
@@ -14,15 +14,51 @@ function Library({
   onUpdateBook
 }) {
   const [editableLastPage, setEditableLastPage] = useState(lastPage);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [bookData, setBookData] = useState(null);
   const progress = totalPage > 0 ? (editableLastPage / totalPage) * 100 : 0;
   const isFinished = editableLastPage >= totalPage;
 
+  useEffect(() => {
+    const fetchBookData = async () => {
+      if (!userId || !bookId) return;
+      
+      try {
+        const response = await fetch(`http://localhost:3000/api/users/${userId}/books/${bookId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch book data');
+        }
+        const data = await response.json();
+        if (data && data.last_pages !== undefined) {
+          setEditableLastPage(data.last_pages);
+          setBookData(data);
+          if (onUpdateBook) {
+            onUpdateBook(data);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching book data:', error);
+      }
+    };
+
+    fetchBookData();
+  }, [userId, bookId]); // Re-fetch when userId or bookId changes
+
+  // Validate required props
+  if (!userId || !bookId) {
+    console.error('Missing required props: userId or bookId');
+    return null;
+  }
+
   const handleLastPageChange = async (e) => {
+    if (isUpdating) return;
+
     let value = e.target.value.replace(/\D/g, "");
     value = Math.max(0, Math.min(totalPage, Number(value)));
     setEditableLastPage(value);
 
     try {
+      setIsUpdating(true);
       const response = await fetch(`http://localhost:3000/api/users/${userId}/books/${bookId}`, {
         method: 'PUT',
         headers: {
@@ -34,19 +70,26 @@ function Library({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update book progress');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update book progress');
       }
 
       const updatedBook = await response.json();
+      setBookData(updatedBook);
       if (onUpdateBook) {
         onUpdateBook(updatedBook);
       }
     } catch (error) {
       console.error('Error updating book progress:', error);
-      // Optionally revert the local state if the API call fails
       setEditableLastPage(lastPage);
+    } finally {
+      setIsUpdating(false);
     }
   };
+
+  // Use bookData if available, otherwise fall back to props
+  const displayLastRead = bookData?.last_read || lastRead;
+  const displayLastPage = editableLastPage;
 
   return (
     <div className="col-12 mb-4">
@@ -107,7 +150,7 @@ function Library({
                   FINISHED
                 </span>
               ) : (
-                `Read from ${lastRead.split(" ")[0]}`
+                `Read from ${displayLastRead.split(" ")[0]}`
               )}
             </div>
           </div>
@@ -135,8 +178,9 @@ function Library({
             <div style={{ display: "flex", alignItems: "center", whiteSpace: "nowrap" }}>
               <input
                 type="text"
-                value={editableLastPage}
+                value={displayLastPage}
                 onChange={handleLastPageChange}
+                disabled={isUpdating}
                 style={{
                   width: "40px",
                   fontSize: "1rem",

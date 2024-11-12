@@ -1,44 +1,87 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-function ForYou({
-  imageUrl,
-  title,
-  author,
-  totalPage,
-  user_id,
-  usersBook,
-  setUsersBook,
-}) {
-  const userBooks = usersBook[user_id] || [];
-  
-  const isBookInLibrary = userBooks.some(book => book.title === title);
+const ForYou = ({ imageUrl, title, author, totalPage, bookData ,userId}) => {
+  const [isInLibrary, setIsInLibrary] = useState(false);
+  const [userBookId, setUserBookId] = useState(null);
 
-  const handleLibraryAction = () => {
-    const today = new Date();
-    const formattedDate = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
-    
-    if (isBookInLibrary) {
-      const updatedBooks = userBooks.filter(book => book.title !== title);
-      setUsersBook(prevBooks => ({ ...prevBooks, [user_id]: updatedBooks }));
-    } else {
-      const newId = userBooks.length ? userBooks[userBooks.length - 1].id + 1 : 1;
-      const newBook = {
-        id: newId,
-        title,
-        author,
+  useEffect(() => {
+    const checkIfBookInLibrary = async () => {
+
+      try {
+        const response = await fetch(`/api/users/${userId}/books`);
+        const userBooks = await response.json();
+        
+        const foundBook = userBooks.find(book => 
+          book.title.toLowerCase() === title.toLowerCase() && 
+          book.author.toLowerCase() === author.toLowerCase()
+        );
+        
+        console.log('Found Book:', foundBook);
+        
+        if (foundBook) {
+          setIsInLibrary(true);
+          setUserBookId(foundBook.id);
+        } else {
+          setIsInLibrary(false);
+          setUserBookId(null);
+        }
+      } catch (error) {
+        console.error('Error checking library:', error);
+        setIsInLibrary(false);
+      }
+    };
+
+    checkIfBookInLibrary();
+  }, [userId, title, author]); // Mengubah dependencies
+
+  const handleAddToLibrary = async () => {
+    console.log('Adding book to library...');
+    try {
+      const bookToAdd = {
+        id: bookData.id,
+        title: title,
+        author: author,
         image_url: imageUrl,
-        last_pages: 0,
         total_pages: totalPage,
-        last_read: formattedDate,
+        last_pages: 0,
+        last_read: new Date().toLocaleDateString('en-GB')
       };
 
-      setUsersBook(prevBooks => ({
-        ...prevBooks,
-        [user_id]: [...userBooks, newBook],
-      }));
+      console.log('Sending book data:', bookToAdd);
+
+      const response = await fetch(`/api/users/${userId}/books`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookToAdd),
+      });
+
+      if (response.ok) {
+        const newBook = await response.json();
+        console.log('Book added successfully:', newBook);
+        setIsInLibrary(true);
+        setUserBookId(newBook.id);
+      }
+    } catch (error) {
+      console.error('Error adding book:', error);
+    }
+  };
+
+  const handleRemoveFromLibrary = async () => {
+    console.log('Removing book from library...');
+    try {
+      const response = await fetch(`/api/users/${userId}/books/${userBookId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        console.log('Book removed successfully');
+        setIsInLibrary(false);
+        setUserBookId(null);
+      }
+    } catch (error) {
+      console.error('Error removing book:', error);
     }
   };
 
@@ -99,22 +142,23 @@ function ForYou({
           </p>
         </div>
         <button
-          onClick={handleLibraryAction}
+          onClick={isInLibrary ? handleRemoveFromLibrary : handleAddToLibrary}
           style={{
-            backgroundColor: isBookInLibrary ? "#FF7F7F" : "#90EE90",
+            backgroundColor: isInLibrary ? "#FF6B6B" : "#90EE90",
             padding: "8px 16px",
             fontSize: "0.9rem",
             fontWeight: "bold",
             border: "none",
             borderRadius: "10px",
             cursor: "pointer",
+            transition: "background-color 0.3s ease",
           }}
         >
-          {isBookInLibrary ? "REMOVE FROM LIBRARY" : "ADD TO LIBRARY"}
+          {isInLibrary ? "DELETE FROM LIBRARY" : "ADD TO LIBRARY"}
         </button>
       </div>
     </div>
   );
-}
+};
 
 export default ForYou;
