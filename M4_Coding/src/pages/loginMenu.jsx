@@ -1,10 +1,18 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import axios from "axios";
 import logonavbar from "../assets/book.png";
 import Library from "../components/Library";
 import ForYou from "../components/ForYou";
 import UserLibrary from "../components/UserLibrary";
 
-// SearchBar Component with maintained focus
+const API_BASE_URL = 'http://localhost:3001/api';
+const axiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
 const SearchBar = ({ onSearch, placeholder = "Search by title or author", initialValue = "" }) => {
   const [searchTerm, setSearchTerm] = useState(initialValue);
   const [debouncedTerm, setDebouncedTerm] = useState(initialValue);
@@ -18,7 +26,7 @@ const SearchBar = ({ onSearch, placeholder = "Search by title or author", initia
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedTerm(searchTerm);
-    }, 300); // 300ms delay
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [searchTerm]);
@@ -64,7 +72,6 @@ function LoginMenu({ userLoggedIn, setRoute }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Reset search terms when changing pages
   const handlePageChange = (page) => {
     setActivePage(page);
     if (page !== "library") {
@@ -73,28 +80,23 @@ function LoginMenu({ userLoggedIn, setRoute }) {
     if (page !== "myLibrary") {
       setMyBookSearch("");
     }
+    if (page === "myLibrary" || page === "home") {
+      fetchUserBooks();
+    }
   };
 
-  // Memoized fetch functions using useCallback
   const fetchBooks = useCallback(async () => {
     if (!bookSearch && bookSearch !== '') return;
     
     setIsLoading(true);
     setError(null);
     try {
-      const url = new URL('http://localhost:3000/api/books');
-      if (bookSearch.trim()) {
-        url.searchParams.append('search', bookSearch.trim());
-      }
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setBooks(data);
+      const params = bookSearch.trim() ? { search: bookSearch.trim() } : {};
+      const response = await axiosInstance.get('/books', { params });
+      setBooks(response.data);
     } catch (error) {
       console.error('Error fetching books:', error);
-      setError('Failed to fetch books');
+      setError(error.response?.data?.message || 'Failed to fetch books');
     } finally {
       setIsLoading(false);
     }
@@ -102,70 +104,80 @@ function LoginMenu({ userLoggedIn, setRoute }) {
 
   const fetchUserBooks = useCallback(async () => {
     if (!user_id) return;
-    if (!myBookSearch && myBookSearch !== '') return;
     
     setIsLoading(true);
     setError(null);
     try {
-      const url = new URL(`http://localhost:3000/api/users/${user_id}/books`);
-      if (myBookSearch.trim()) {
-        url.searchParams.append('search', myBookSearch.trim());
-      }
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setUserBooks(data);
+      const params = myBookSearch?.trim() ? { search: myBookSearch.trim() } : {};
+      const response = await axiosInstance.get(`/users/${user_id}/books`, { params });
+      setUserBooks(response.data);
     } catch (error) {
       console.error('Error fetching user books:', error);
-      setError('Failed to fetch user books');
+      setError(error.response?.data?.message || 'Failed to fetch user books');
     } finally {
       setIsLoading(false);
     }
   }, [user_id, myBookSearch]);
 
-  // Initial data fetch
   useEffect(() => {
     const loadInitialData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('http://localhost:3000/api/books');
-        if (!response.ok) throw new Error('Failed to fetch initial books');
-        const data = await response.json();
-        setBooks(data);
+        const promises = [axiosInstance.get('/books')];
+        if (user_id) {
+          promises.push(axiosInstance.get(`/users/${user_id}/books`));
+        }
+        
+        const [booksResponse, userBooksResponse] = await Promise.all(promises);
+        setBooks(booksResponse.data);
+        
+        if (userBooksResponse) {
+          setUserBooks(userBooksResponse.data);
+        }
       } catch (error) {
         console.error('Error loading initial data:', error);
-        setError('Failed to load initial books');
+        setError(error.response?.data?.message || 'Failed to load initial data');
       } finally {
         setIsLoading(false);
       }
     };
     
     loadInitialData();
-  }, []);
+  }, [user_id]);
 
-  // Fetch books when search changes
   useEffect(() => {
     if (bookSearch !== null) {
       fetchBooks();
     }
   }, [fetchBooks, bookSearch]);
 
-  // Fetch user books when search changes
   useEffect(() => {
     if (user_id && myBookSearch !== null) {
       fetchUserBooks();
     }
   }, [fetchUserBooks, user_id, myBookSearch]);
 
-  // Optimized sorting functions
-  const getLastTwoBooks = useCallback((books) => {
+  const getLastTwoBooks = (books) => {
     if (!books?.length) return [];
-    return [...books]
-      .sort((a, b) => new Date(b.last_read) - new Date(a.last_read))
-      .slice(0, 2);
-  }, []);
+    
+    const today = new Date();
+    const booksWithDateDiff = books.map(book => {
+      const [day, month, year] = book.last_read.split('/');
+      const lastReadDate = new Date(year, month - 1, day); 
+      
+      return {
+        ...book,
+        dateDifference: Math.abs(today - lastReadDate)
+      };
+    });
+    return booksWithDateDiff
+      .sort((a, b) => a.dateDifference - b.dateDifference)
+      .slice(0, 2)
+      .map(book => {
+        const { dateDifference, ...cleanBook } = book;
+        return cleanBook;
+      });
+  };
 
   const getRecentBooks = useCallback((books) => {
     if (!books?.length) return [];
@@ -174,56 +186,33 @@ function LoginMenu({ userLoggedIn, setRoute }) {
       .slice(0, 5);
   }, []);
 
-  // Book operations
   const updateUserBookProgress = async (bookId, lastPages) => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/users/${user_id}/books/${bookId}`,
-        {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ last_pages: lastPages }),
-        }
-      );
+      await axiosInstance.put(`/users/${user_id}/books/${bookId}`, {
+        last_pages: lastPages
+      });
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const updatedBook = await response.json();
-      setUserBooks(prevBooks => 
-        prevBooks.map(book => book.id === bookId ? updatedBook : book)
-      );
+      await fetchUserBooks(); 
     } catch (error) {
       console.error('Error updating book progress:', error);
-      setError('Failed to update book progress');
+      setError(error.response?.data?.message || 'Failed to update book progress');
     }
   };
 
   const addBookToUserLibrary = async (bookData) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/users/${user_id}/books`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bookData),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const newBook = await response.json();
-      setUserBooks(prevBooks => [...prevBooks, newBook]);
+      await axiosInstance.post(`/users/${user_id}/books`, bookData);
+      await fetchUserBooks(); 
+      setError(null); 
     } catch (error) {
       console.error('Error adding book to library:', error);
-      setError('Failed to add book to library');
+      setError(error.response?.data?.message || 'Failed to add book to library');
     }
   };
 
   const lastTwoBooks = getLastTwoBooks(userBooks);
   const recentBooks = getRecentBooks(books);
 
-  // Navigation component
   const Navigation = () => (
     <nav className="navbar navbar-expand-lg" style={{ backgroundColor: "#F66B6B", padding: "1rem 1.5rem" }}>
       <div className="container-fluid d-flex align-items-center">

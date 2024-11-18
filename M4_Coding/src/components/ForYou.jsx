@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function ForYou({ imageUrl, title, author, totalPage, bookId, userId, onStatusChange }) {
   const [inLibrary, setInLibrary] = useState(false);
@@ -7,9 +8,7 @@ function ForYou({ imageUrl, title, author, totalPage, bookId, userId, onStatusCh
   useEffect(() => {
     const checkLibraryStatus = async () => {
       try {
-        const response = await fetch(`/api/users/${userId}/books`);
-        const userBooks = await response.json();
-        console.log(userBooks.data);
+        const { data: userBooks } = await axios.get(`/api/users/${userId}/books`);
         const bookExists = userBooks.some(book => book.id === bookId);
         setInLibrary(bookExists);
       } catch (error) {
@@ -31,39 +30,25 @@ function ForYou({ imageUrl, title, author, totalPage, bookId, userId, onStatusCh
     setIsLoading(true);
     try {
       if (inLibrary) {
-        // Remove from library
-        const response = await fetch(`/api/users/${userId}/books/${bookId}`, {
-          method: 'DELETE',
-        });
-
-        if (response.ok) {
-          setInLibrary(false);
-          if (onStatusChange) {
-            onStatusChange(false);
-          }
+        await axios.delete(`/api/users/${userId}/books/${bookId}`);
+        setInLibrary(false);
+        if (onStatusChange) {
+          onStatusChange(false);
         }
       } else {
         // Add to library
-        const response = await fetch(`/api/users/${userId}/books`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            id: bookId,
-            title,
-            author,
-            image_url: imageUrl,
-            total_pages: totalPage,
-            last_pages: 0
-          }),
+        await axios.post(`/api/users/${userId}/books`, {
+          id: bookId,
+          title,
+          author,
+          image_url: imageUrl,
+          total_pages: totalPage,
+          last_pages: 0
         });
 
-        if (response.ok) {
-          setInLibrary(true);
-          if (onStatusChange) {
-            onStatusChange(true);
-          }
+        setInLibrary(true);
+        if (onStatusChange) {
+          onStatusChange(true);
         }
       }
     } catch (error) {
@@ -75,12 +60,12 @@ function ForYou({ imageUrl, title, author, totalPage, bookId, userId, onStatusCh
   };
 
   return (
-    <div 
-      className="col-6 col-md-4 col-lg-2 mb-4 d-flex" 
+    <div
+      className="col-6 col-md-4 col-lg-2 mb-4 d-flex"
       style={{ alignItems: "stretch", flex: "0 0 20%", marginTop: "2vh" }}
     >
-      <div 
-        className="card text-center p-3 d-flex flex-column" 
+      <div
+        className="card text-center p-3 d-flex flex-column"
         style={{ backgroundColor: "#FFE5E5", borderRadius: "10px", flexGrow: 1 }}
       >
         <img
@@ -95,20 +80,20 @@ function ForYou({ imageUrl, title, author, totalPage, bookId, userId, onStatusCh
           }}
         />
         <div className="card-body d-flex flex-column" style={{ flexGrow: 1 }}>
-          <h5 
-            className="card-title" 
+          <h5
+            className="card-title"
             style={{ fontWeight: "bold", fontSize: "1.1rem", marginBottom: "0.5rem" }}
           >
             {title}
           </h5>
-          <p 
-            className="card-text" 
+          <p
+            className="card-text"
             style={{ marginBottom: "0.5rem", fontSize: "0.9rem", color: "#555" }}
           >
             {author}
           </p>
-          <p 
-            className="card-text" 
+          <p
+            className="card-text"
             style={{ fontWeight: "bold", fontSize: "0.9rem", marginBottom: "1rem" }}
           >
             {totalPage} Pages

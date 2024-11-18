@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import logonavbar from "../assets/book.png";
 import Library from "../components/adminLibrary";
 import ListUser from "../components/listUser";
 import AddBooks from "../components/addBooks";
 import AddUsers from "../components/addUsers";
+
+// Base URL configuration for axios
+const API_BASE_URL = "http://localhost:3001/api";
+const axiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 function AdminMenu({ setRoute }) {
   const [books, setBooks] = useState([]);
@@ -11,6 +21,7 @@ function AdminMenu({ setRoute }) {
   const [bookSearch, setBookSearch] = useState("");
   const [userSearch, setUserSearch] = useState("");
   const [activePage, setActivePage] = useState("home");
+  const [error, setError] = useState(null);
 
   // Fetch books and users on component mount
   useEffect(() => {
@@ -18,38 +29,50 @@ function AdminMenu({ setRoute }) {
     fetchUsers();
   }, []);
 
-  // Fetch books from API
+  // Fetch books from API using axios
   const fetchBooks = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/books');
-      const data = await response.json();
-      setBooks(data);
+      const response = await axiosInstance.get("/books");
+      setBooks(response.data);
+      setError(null);
     } catch (error) {
-      console.error('Error fetching books:', error);
+      console.error("Error fetching books:", error);
+      setError(error.response?.data?.message || "Failed to fetch books");
     }
   };
 
-  // Fetch users from API
+  // Fetch users from API using axios
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/users');
-      const data = await response.json();
-      setUsers(data);
+      const response = await axiosInstance.get("/users");
+      setUsers(response.data);
+      setError(null);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
+      setError(error.response?.data?.message || "Failed to fetch users");
     }
   };
 
-  // Handle book deletion
+  const handleDeleteUser = async (userId) => {
+    try {
+      await axiosInstance.delete(`/users/${userId}`);
+      setUsers(users.filter((u) => u.id !== userId));
+      setError(null);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      setError(error.response?.data?.message || "Failed to delete user");
+    }
+  };
+
   const handleDeleteBook = async (bookId) => {
     try {
-      await fetch(`http://localhost:3000/api/books/${bookId}`, {
-        method: 'DELETE',
-      });
+      await axiosInstance.delete(`/books/${bookId}`);
       // Refresh books list after deletion
       fetchBooks();
+      setError(null);
     } catch (error) {
-      console.error('Error deleting book:', error);
+      console.error("Error deleting book:", error);
+      setError(error.response?.data?.message || "Failed to delete book");
     }
   };
 
@@ -77,7 +100,11 @@ function AdminMenu({ setRoute }) {
         }}
       >
         <div className="container-fluid d-flex align-items-center">
-          <a className="navbar-brand d-flex align-items-center" href="#" style={{ color: "white", fontWeight: "bold" }}>
+          <a
+            className="navbar-brand d-flex align-items-center"
+            href="#"
+            style={{ color: "white", fontWeight: "bold" }}
+          >
             <img
               src={logonavbar}
               alt="Logo"
@@ -85,16 +112,49 @@ function AdminMenu({ setRoute }) {
               height="auto"
               className="d-inline-block align-text-top m-0 p-0"
             />
-            <span style={{ fontSize: "calc(12px + 1vw)", marginLeft: "0.5rem", marginRight: "3vw" }}>
+            <span
+              style={{
+                fontSize: "calc(12px + 1vw)",
+                marginLeft: "0.5rem",
+                marginRight: "3vw",
+              }}
+            >
               LKOMP LIBRARY
             </span>
-            <a href="#" style={{ color: "white", fontWeight: "bold", textDecoration: activePage === "home" ? "underline" : "none", marginRight: "3vw" }} onClick={() => setActivePage("home")}>
+            <a
+              href="#"
+              style={{
+                color: "white",
+                fontWeight: "bold",
+                textDecoration: activePage === "home" ? "underline" : "none",
+                marginRight: "3vw",
+              }}
+              onClick={() => setActivePage("home")}
+            >
               Home
             </a>
-            <a href="#" style={{ color: "white", fontWeight: "bold", textDecoration: activePage === "addBooks" ? "underline" : "none", marginRight: "3vw" }} onClick={() => setActivePage("addBooks")}>
+            <a
+              href="#"
+              style={{
+                color: "white",
+                fontWeight: "bold",
+                textDecoration:
+                  activePage === "addBooks" ? "underline" : "none",
+                marginRight: "3vw",
+              }}
+              onClick={() => setActivePage("addBooks")}
+            >
               Add Book
             </a>
-            <a href="#" style={{ color: "white", fontWeight: "bold", textDecoration: activePage === "addUser" ? "underline" : "none" }} onClick={() => setActivePage("addUser")}>
+            <a
+              href="#"
+              style={{
+                color: "white",
+                fontWeight: "bold",
+                textDecoration: activePage === "addUser" ? "underline" : "none",
+              }}
+              onClick={() => setActivePage("addUser")}
+            >
               Add User
             </a>
           </a>
@@ -102,6 +162,12 @@ function AdminMenu({ setRoute }) {
       </nav>
 
       <div className="container-fluid mt-4" style={{ overflowX: "hidden" }}>
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
+
         {activePage === "home" ? (
           <>
             <div className="d-flex justify-content-between align-items-center">
@@ -119,7 +185,10 @@ function AdminMenu({ setRoute }) {
               </button>
             </div>
             <div className="container-fluid">
-              <div className="justify-content-between align-items-center mt-4 mb-4" style={{ marginLeft: "1vw" }}>
+              <div
+                className="justify-content-between align-items-center mt-4 mb-4"
+                style={{ marginLeft: "1vw" }}
+              >
                 <h1 style={{ fontWeight: "700" }}>List Book</h1>
                 <input
                   style={{
@@ -152,7 +221,10 @@ function AdminMenu({ setRoute }) {
               </div>
             </div>
             <div className="container-fluid">
-              <div className="justify-content-between align-items-center mt-4 mb-3" style={{ marginLeft: "1vw" }}>
+              <div
+                className="justify-content-between align-items-center mt-4 mb-3"
+                style={{ marginLeft: "1vw" }}
+              >
                 <h1 style={{ fontWeight: "700" }}>List User</h1>
                 <input
                   style={{
@@ -175,9 +247,7 @@ function AdminMenu({ setRoute }) {
                       username={user.username}
                       email={user.email}
                       join_at={user.join_at}
-                      onDelete={() => {
-                        setUsers(users.filter((u) => u.id !== user.id));
-                      }}
+                      onDelete={() => handleDeleteUser(user.id)}
                     />
                   ))
                 ) : (

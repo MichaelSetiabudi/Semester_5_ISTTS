@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 function Library({
   imageUrl,
@@ -24,11 +25,7 @@ function Library({
       if (!userId || !bookId) return;
       
       try {
-        const response = await fetch(`http://localhost:3000/api/users/${userId}/books/${bookId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch book data');
-        }
-        const data = await response.json();
+        const { data } = await axios.get(`http://localhost:3001/api/users/${userId}/books/${bookId}`);
         if (data && data.last_pages !== undefined) {
           setEditableLastPage(data.last_pages);
           setBookData(data);
@@ -42,9 +39,7 @@ function Library({
     };
 
     fetchBookData();
-  }, [userId, bookId]); // Re-fetch when userId or bookId changes
-
-  // Validate required props
+  }, [userId, bookId, onUpdateBook]); 
   if (!userId || !bookId) {
     console.error('Missing required props: userId or bookId');
     return null;
@@ -59,22 +54,16 @@ function Library({
 
     try {
       setIsUpdating(true);
-      const response = await fetch(`http://localhost:3000/api/users/${userId}/books/${bookId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          last_pages: value
-        })
-      });
+      const { data: updatedBook } = await axios.put(
+        `http://localhost:3001/api/users/${userId}/books/${bookId}`,
+        { last_pages: value },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update book progress');
-      }
-
-      const updatedBook = await response.json();
       setBookData(updatedBook);
       if (onUpdateBook) {
         onUpdateBook(updatedBook);
@@ -87,7 +76,6 @@ function Library({
     }
   };
 
-  // Use bookData if available, otherwise fall back to props
   const displayLastRead = bookData?.last_read || lastRead;
   const displayLastPage = editableLastPage;
 

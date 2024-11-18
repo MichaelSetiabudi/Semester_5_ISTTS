@@ -2,6 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
+import axios from "axios";
 
 const schema = Joi.object({
   title: Joi.string().min(5).max(100).required().label("Title"),
@@ -27,16 +28,19 @@ function AddBooks({ fetchBooks, setActivePage }) {
         total_pages: parseInt(data.total_pages, 10)
       };
 
-      const response = await fetch('http://localhost:3000/api/books', {
-        method: 'POST',
+      await axios.post('http://localhost:3001/api/books', bookData, {
         headers: {
           'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(bookData),
+        }
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      await fetchBooks();
+      setActivePage("home");
+    } catch (error) {
+      console.error('Error adding book:', error);
+      
+      if (error.response?.data) {
+        const errorData = error.response.data;
         if (errorData.field) {
           setError(errorData.field, {
             type: 'manual',
@@ -48,17 +52,12 @@ function AddBooks({ fetchBooks, setActivePage }) {
             message: errorData.message || 'An error occurred while adding the book.',
           });
         }
-        return;
+      } else {
+        setError('root.serverError', {
+          type: 'manual',
+          message: 'An error occurred while adding the book. Please try again.',
+        });
       }
-
-      await fetchBooks();
-      setActivePage("home");
-    } catch (error) {
-      console.error('Error adding book:', error);
-      setError('root.serverError', {
-        type: 'manual',
-        message: 'An error occurred while adding the book. Please try again.',
-      });
     }
   };
 

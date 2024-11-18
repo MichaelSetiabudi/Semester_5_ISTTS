@@ -1,23 +1,30 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-const ForYou = ({ imageUrl, title, author, totalPage, bookData ,userId}) => {
+const API_BASE_URL = 'http://localhost:3001';
+
+const ForYou = ({ imageUrl, title, author, totalPage, bookData, userId }) => {
   const [isInLibrary, setIsInLibrary] = useState(false);
   const [userBookId, setUserBookId] = useState(null);
 
   useEffect(() => {
     const checkIfBookInLibrary = async () => {
+      if (!userId) return;
 
       try {
-        const response = await fetch(`/api/users/${userId}/books`);
-        const userBooks = await response.json();
-        
+        const { data: userBooks } = await axios.get(`${API_BASE_URL}/api/users/${userId}/books`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+
+
         const foundBook = userBooks.find(book => 
           book.title.toLowerCase() === title.toLowerCase() && 
           book.author.toLowerCase() === author.toLowerCase()
         );
-        
-        console.log('Found Book:', foundBook);
-        
+
         if (foundBook) {
           setIsInLibrary(true);
           setUserBookId(foundBook.id);
@@ -32,10 +39,11 @@ const ForYou = ({ imageUrl, title, author, totalPage, bookData ,userId}) => {
     };
 
     checkIfBookInLibrary();
-  }, [userId, title, author]); // Mengubah dependencies
+  }, [userId, title, author]);
 
   const handleAddToLibrary = async () => {
-    console.log('Adding book to library...');
+    if (!userId) return;
+
     try {
       const bookToAdd = {
         id: bookData.id,
@@ -47,39 +55,39 @@ const ForYou = ({ imageUrl, title, author, totalPage, bookData ,userId}) => {
         last_read: new Date().toLocaleDateString('en-GB')
       };
 
-      console.log('Sending book data:', bookToAdd);
+      const { data: newBook } = await axios.post(
+        `${API_BASE_URL}/api/users/${userId}/books`,
+        bookToAdd,
+        {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        }
+      );
 
-      const response = await fetch(`/api/users/${userId}/books`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(bookToAdd),
-      });
-
-      if (response.ok) {
-        const newBook = await response.json();
-        console.log('Book added successfully:', newBook);
-        setIsInLibrary(true);
-        setUserBookId(newBook.id);
-      }
+      console.log('Book added successfully:', newBook);
+      setIsInLibrary(true);
+      setUserBookId(newBook.id);
     } catch (error) {
       console.error('Error adding book:', error);
     }
   };
 
   const handleRemoveFromLibrary = async () => {
-    console.log('Removing book from library...');
+    if (!userId || !userBookId) return;
+
     try {
-      const response = await fetch(`/api/users/${userId}/books/${userBookId}`, {
-        method: 'DELETE',
+      await axios.delete(`${API_BASE_URL}/api/users/${userId}/books/${userBookId}`, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
       });
 
-      if (response.ok) {
-        console.log('Book removed successfully');
-        setIsInLibrary(false);
-        setUserBookId(null);
-      }
+      console.log('Book removed successfully');
+      setIsInLibrary(false);
+      setUserBookId(null);
     } catch (error) {
       console.error('Error removing book:', error);
     }

@@ -2,6 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
+import axios from "axios";
 
 const schema = Joi.object({
   email: Joi.string()
@@ -34,41 +35,36 @@ function AddUsers({ fetchUsers, setActivePage }) {
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch('http://localhost:3000/api/users', {
-        method: 'POST',
+      await axios.post('http://localhost:3001/api/users', data, {
         headers: {
           'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+        }
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
+      
+      await fetchUsers();
+      setActivePage("home");
+    } catch (error) {
+      console.error('Error adding user:', error);
+      
+      if (error.response?.data) {
+        const errorData = error.response.data;
         if (errorData.field) {
-          // If the backend specifies which field had an error
           setError(errorData.field, {
             type: 'manual',
             message: errorData.message,
           });
         } else {
-          // Generic error handling
           setError('root.serverError', {
             type: 'manual',
             message: errorData.message || 'An error occurred while adding the user.',
           });
         }
-        return;
+      } else {
+        setError('root.serverError', {
+          type: 'manual',
+          message: 'An error occurred while adding the user. Please try again.',
+        });
       }
-
-      // If successful, refresh the users list and navigate back
-      await fetchUsers();
-      setActivePage("home");
-    } catch (error) {
-      console.error('Error adding user:', error);
-      setError('root.serverError', {
-        type: 'manual',
-        message: 'An error occurred while adding the user. Please try again.',
-      });
     }
   };
 

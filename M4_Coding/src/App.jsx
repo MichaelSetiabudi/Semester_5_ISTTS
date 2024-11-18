@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import AdminMenu from "./pages/adminMenu";
 import LoginMenu from "./pages/loginMenu";
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:3001/api';
 
 function LoginPage({ onLoginSuccess }) {
   const [form, setForm] = useState({
@@ -33,7 +33,6 @@ function LoginPage({ onLoginSuccess }) {
       });
       
       const data = await response.json();
-      console.log(data);
       if (!response.ok) {
         setErrorMessage(data.message);
         return;
