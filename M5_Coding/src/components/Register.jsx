@@ -16,11 +16,8 @@ function Register({ setCurrentPage }) {
   const users = useSelector(state => state.users.users);
 
   useEffect(() => {
-    // Log current users whenever the users array changes
     console.log('Current users:', users);
   }, [users]);
-
-  // Tambahkan useEffect untuk memantau perubahan error
   useEffect(() => {
     if (error === 'Username already exists!') {
       alert('User already registered!');
@@ -31,8 +28,6 @@ function Register({ setCurrentPage }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(registerUser(form));
-    
-    // Jika tidak ada error, redirect ke login
     if (!error) {
       setCurrentPage('login');
     }

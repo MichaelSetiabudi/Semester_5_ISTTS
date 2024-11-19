@@ -5,7 +5,7 @@ const initialUsers = [
     username: "admin",
     password: "admin123",
     fullName: "Admin User",
-    gender: "Male",
+    gender: "Male", 
     hobby: "Reading",
   },
 ];
@@ -18,23 +18,23 @@ const userSlice = createSlice({
     error: null,
   },
   reducers: {
+    updateProfile: (state, action) => {
+      const updatedUser = action.payload;
+      state.currentUser = updatedUser;
+      const index = state.users.findIndex(user => user.username === updatedUser.username);
+      if (index !== -1) {
+        state.users[index] = updatedUser;
+      }
+    },
     registerUser: (state, action) => {
-      console.log("Current users before registration:", state.users);
-
       const isUserExist = state.users.find(
         (user) => user.username === action.payload.username
       );
-
+      
       if (isUserExist) {
-        console.log(
-          "Registration failed - Username already exists:",
-          action.payload.username
-        );
         state.error = "Username already exists!";
       } else {
         state.users.push(action.payload);
-        console.log("New user registered:", action.payload);
-        console.log("Updated users list:", state.users);
         state.error = null;
       }
     },
@@ -61,7 +61,12 @@ const userSlice = createSlice({
   },
 });
 
-export const { registerUser, loginUser, logoutUser, clearError } =
-  userSlice.actions;
+export const { 
+  registerUser, 
+  loginUser, 
+  logoutUser, 
+  clearError, 
+  updateProfile 
+} = userSlice.actions;
 
 export default userSlice.reducer;
