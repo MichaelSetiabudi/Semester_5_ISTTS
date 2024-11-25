@@ -1,0 +1,82 @@
+[
+    {
+        "id": 1,
+        "name": "Organic Cotton T-Shirt",
+        "description": "This is a high-quality t-shirt made from 100% organic cotton. It is soft, comfortable, and perfect for everyday wear.",
+        "price": 19.99,
+        "category": "Clothing",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 2,
+        "name": "Wireless Bluetooth Earbuds",
+        "description": "These earbuds are perfect for listening to music on the go. They are wireless, lightweight, and have a long battery life.",
+        "price": 49.99,
+        "category": "Electronics",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 3,
+        "name": "Handmade Leather Wallet",
+        "description": "This wallet is made from high-quality leather and is handcrafted by skilled artisans. It has plenty of space for cards and cash.",
+        "price": 39.99,
+        "category": "Accessories",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 4,
+        "name": "Stainless Steel Water Bottle",
+        "description": "This water bottle is made from durable stainless steel and is perfect for staying hydrated on the go. It is leak-proof and easy to clean.",
+        "price": 24.99,
+        "category": "Sports",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 5,
+        "name": "Organic Matcha Green Tea",
+        "description": "This matcha green tea is made from high-quality organic tea leaves and is perfect for a healthy and refreshing drink.",
+        "price": 14.99,
+        "category": "Food",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 6,
+        "name": "Portable Power Bank",
+        "description": "This power bank is perfect for charging your devices on the go. It is lightweight, compact, and has a high-capacity battery.",
+        "price": 29.99,
+        "category": "Electronics",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 7,
+        "name": "Natural Bamboo Cutting Board",
+        "description": "This cutting board is made from high-quality bamboo and is perfect for preparing food. It is durable, easy to clean, and eco-friendly.",
+        "price": 34.99,
+        "category": "Kitchen",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 8,
+        "name": "Organic Lavender Essential Oil",
+        "description": "This essential oil is made from high-quality organic lavender and is perfect for relaxation and stress relief. It can be used in a diffuser or added to a bath.",
+        "price": 19.99,
+        "category": "Beauty",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 9,
+        "name": "Men's Leather Dress Shoes",
+        "description": "These dress shoes are made from high-quality leather and are perfect for formal occasions. They are comfortable, stylish, and durable.",
+        "price": 89.99,
+        "category": "Shoes",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 10,
+        "name": "Reusable Beeswax Food Wraps",
+        "description": "These food wraps are made from natural beeswax and are perfect for keeping food fresh. They are reusable, eco-friendly, and easy to clean.",
+        "price": 12.99,
+        "category": "Kitchen",
+        "image": "https://via.placeholder.com/150"
+    }
+]

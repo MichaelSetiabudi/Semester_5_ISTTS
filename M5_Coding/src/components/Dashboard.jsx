@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../../store/userSlice";
@@ -7,8 +8,10 @@ import AddPost from "./AddPost";
 
 function Dashboard({ setCurrentPage }) {
   const currentUser = useSelector((state) => state.users.currentUser);
-  const posts = useSelector((state) => state.posts.posts);
-  const allUsers = useSelector((state) => state.users.users); // Get all users for lookup
+  const posts = useSelector((state) => 
+    [...state.posts.posts].sort((a, b) => b.likes - a.likes)
+  );
+  const allUsers = useSelector((state) => state.users.users); 
   const [currentLoginPage, setCurrentLoginPage] = React.useState("dashboard");
   const dispatch = useDispatch();
 
@@ -34,10 +37,9 @@ function Dashboard({ setCurrentPage }) {
     );
   };
 
-  // Function to get fullName from username
   const getAuthorFullName = (username) => {
     const user = allUsers.find(user => user.username === username);
-    return user ? user.fullName : username; // Fallback to username if user not found
+    return user ? user.fullName : username; 
   };
 
   const getVoteButtonStyle = (post, isUpvote) => {
@@ -222,8 +224,6 @@ function Dashboard({ setCurrentPage }) {
                   }}
                 >
                   <span>Posted by {getAuthorFullName(post.author)}</span>
-                  <span>•</span>
-                  <span>{post.timePosted}</span>
                 </div>
 
                 <div
