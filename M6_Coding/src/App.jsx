@@ -17,6 +17,8 @@ const dataHandler = {
       return { success: true, role: 'admin', redirectTo: '/admin/barang' }
     } else if (username === 'buyer' && password === 'buyer') {
       return { success: true, role: 'buyer', redirectTo: '/buyer/home' }
+    }else{
+      return {success:false,}
     }
     
     throw new Error('Invalid credentials')
@@ -57,6 +59,7 @@ const router = createBrowserRouter([
           {
             path: 'home',
             element: <BuyerDashboard />,
+            loader: productLoader.loadProducts,
           }
         ]
       }

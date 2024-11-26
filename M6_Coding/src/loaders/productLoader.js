@@ -109,6 +109,7 @@ const formProductAction = async (data) => {
         name: updatedData.name,
         quantity: Number(updatedData.quantity),
         price: Number(updatedData.price),
+        image:updatedData.image,
         // Pastikan ID tetap sama
         id: products.products[productIndex].id
       };

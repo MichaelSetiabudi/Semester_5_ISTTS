@@ -197,8 +197,6 @@ export default function AdminDashboard() {
     if (actionData.success) {
       setShowAlert(true);
       setAlertType("success");
-      
-      // Reset form jika perlu
       setNewProduct({
         name: "",
         quantity: "",
