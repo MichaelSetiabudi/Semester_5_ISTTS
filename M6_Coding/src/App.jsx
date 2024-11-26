@@ -1,7 +1,7 @@
-// App.jsx
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Home from './pages/Home'
 import AdminDashboard from './pages/AdminDashboard'
+import EditProduct from './pages/EditProduct'  
 import BuyerDashboard from './pages/BuyerDashboard'
 import Login from './pages/Login'
 import Error from './pages/Error'
@@ -18,6 +18,7 @@ const dataHandler = {
     } else if (username === 'buyer' && password === 'buyer') {
       return { success: true, role: 'buyer', redirectTo: '/buyer/home' }
     }
+    
     throw new Error('Invalid credentials')
   }
 }
@@ -40,6 +41,12 @@ const router = createBrowserRouter([
             path: 'barang',
             element: <AdminDashboard />,
             loader: productLoader.loadProducts,
+            action: productLoader.formProductAction,
+          },
+          {
+            path: 'barang/:id',
+            element: <EditProduct />,
+            loader: productLoader.getProduct,
             action: productLoader.formProductAction,
           }
         ]

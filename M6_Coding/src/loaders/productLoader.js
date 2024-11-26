@@ -1,5 +1,11 @@
-import products from "../data/products.json";
+// loaders/productLoader.js
+import productsData from "../data/products.json";
 import { redirect } from "react-router-dom";
+
+// Create a memory copy of products that will be used during runtime
+let products = {
+  products: [...productsData.products],
+};
 
 const validateProduct = (data) => {
   const errors = {};
@@ -57,42 +63,60 @@ const formProductAction = async (data) => {
 
       const validation = validateProduct(newProduct);
       if (!validation.isValid) {
-        return { errors: validation.errors };
+        return {
+          success: false,
+          errors: validation.errors,
+        };
       }
-      newProduct.image = newProduct.image;
-      newProduct.quantity = Number(newProduct.quantity);
-      newProduct.price = Number(newProduct.price);
-      newProduct.id = products.products.length + 1;
-      products.products.push(newProduct);
 
-      return { success: true, message: "Produk berhasil ditambahkan" };
+      // Prepare new product data
+      const processedProduct = {
+        name: newProduct.name,
+        image: newProduct.image,
+        quantity: Number(newProduct.quantity),
+        price: Number(newProduct.price),
+        id: products.products.length + 1,
+      };
+
+      // Add new product to memory
+      products.products.push(processedProduct);
+
+      return redirect("/admin/barang");
     } else if (data.request.method === "PUT") {
       const formData = await data.request.formData();
       const updatedData = Object.fromEntries(formData);
 
-      // Validate the updated data
       const validation = validateProduct(updatedData);
       if (!validation.isValid) {
-        return { errors: validation.errors };
+        return { 
+          success: false,
+          errors: validation.errors 
+        };
       }
 
-      updatedData.quantity = Number(updatedData.quantity);
-      updatedData.price = Number(updatedData.price);
-
-      const indexUpdated = products.products.findIndex(
+      // Find product index
+      const productIndex = products.products.findIndex(
         (x) => x.id == data.params.id
       );
-      if (indexUpdated === -1) {
+
+      if (productIndex === -1) {
         throw new Error("Produk tidak ditemukan");
       }
 
-      products.products[indexUpdated] = {
-        ...products.products[indexUpdated],
-        ...updatedData,
-        id: products.products[indexUpdated].id,
-        image: products.products[indexUpdated].image,
+      // Update product in memory dengan menyimpan semua data yang ada
+      const updatedProduct = {
+        ...products.products[productIndex], // Preserve existing data
+        name: updatedData.name,
+        quantity: Number(updatedData.quantity),
+        price: Number(updatedData.price),
+        // Pastikan ID tetap sama
+        id: products.products[productIndex].id
       };
 
+      // Replace product lama dengan yang baru
+      products.products[productIndex] = updatedProduct;
+
+      // Ensure the page fetches the updated products list on redirect
       return redirect("/admin/barang");
     } else if (data.request.method === "DELETE") {
       const productId = data.params.id;
@@ -104,13 +128,15 @@ const formProductAction = async (data) => {
         throw new Error("Produk tidak ditemukan");
       }
 
+      // Remove product from memory
       products.products.splice(productIndex, 1);
+
       return redirect("/admin/barang");
     }
 
     return redirect("/admin/barang");
   } catch (error) {
-    throw new Error("Gagal memproses data produk");
+    throw new Error("Gagal memproses data produk: " + error.message);
   }
 };
 
