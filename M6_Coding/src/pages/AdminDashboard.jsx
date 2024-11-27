@@ -96,8 +96,8 @@ export default function AdminDashboard() {
       borderBottom: "1px solid #ddd",
     },
     productImage: {
-      width: "60px",
-      height: "60px",
+      width: "10rem",
+      height: "10rem",
       objectFit: "cover",
       borderRadius: "4px",
     },
@@ -193,31 +193,31 @@ export default function AdminDashboard() {
 
   // Effect to handle form submission results
   useEffect(() => {
-  if (actionData) {
-    if (actionData.success) {
-      setShowAlert(true);
-      setAlertType("success");
-      setNewProduct({
-        name: "",
-        quantity: "",
-        price: "",
-        image: "",
-      });
+    if (actionData) {
+      if (actionData.success) {
+        setShowAlert(true);
+        setAlertType("success");
+        setNewProduct({
+          name: "",
+          quantity: "",
+          price: "",
+          image: "",
+        });
 
-      setErrors({});
-    } else if (actionData.errors) {
-      setShowAlert(true);
-      setAlertType("error");
-      setErrors(actionData.errors);
+        setErrors({});
+      } else if (actionData.errors) {
+        setShowAlert(true);
+        setAlertType("error");
+        setErrors(actionData.errors);
+      }
+
+      const timer = setTimeout(() => {
+        setShowAlert(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
     }
-
-    const timer = setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }
-}, [actionData]);
+  }, [actionData]);
 
   return (
     <div style={styles.container}>
@@ -269,17 +269,18 @@ export default function AdminDashboard() {
           <thead>
             <tr>
               <th style={styles.th}>ID</th>
-              <th style={styles.th}>Gambar</th>
               <th style={styles.th}>Nama Barang</th>
+              <th style={styles.th}>Gambar</th>
               <th style={styles.th}>Qty</th>
               <th style={styles.th}>Harga</th>
-              <th style={styles.th}>Aksi</th>
+              <th style={styles.th}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {products.map((product, index) => (
               <tr key={product.id}>
                 <td style={styles.td}>{index + 1}</td>
+                <td style={styles.td}>{product.name}</td>
                 <td style={styles.td}>
                   <img
                     src={product.image}
@@ -287,7 +288,6 @@ export default function AdminDashboard() {
                     style={styles.productImage}
                   />
                 </td>
-                <td style={styles.td}>{product.name}</td>
                 <td style={styles.td}>{product.quantity}</td>
                 <td style={styles.td}>{formatPrice(product.price)}</td>
                 <td style={styles.td}>
@@ -315,7 +315,7 @@ export default function AdminDashboard() {
                       type="submit"
                       style={{ ...styles.actionButton, ...styles.deleteButton }}
                     >
-                      Hapus
+                      Delete
                     </button>
                   </Form>
                 </td>

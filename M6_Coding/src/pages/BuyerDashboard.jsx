@@ -1,12 +1,21 @@
 import React, { useState } from "react";
-import { useLoaderData, Link, Form } from "react-router-dom";
+import {
+  useLoaderData,
+  Link,
+  Form,
+  useActionData,
+  useNavigation,
+  useNavigate,
+  Outlet
+} from "react-router-dom";
 
 export default function BuyerDashboard() {
-  const products = useLoaderData() || []; // Fallback jika data kosong
-  const [currentPage, setCurrentPage] = useState(1); // Halaman aktif
-  const itemsPerPage = 5; // Jumlah items per halaman
-
-  // Hitung data untuk halaman saat ini
+  const products = useLoaderData() || [];
+  const actionData = useActionData();
+  const navigation = useNavigation();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const [cart, setCart] = useState([]);
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = products.slice(startIndex, startIndex + itemsPerPage);
@@ -18,11 +27,11 @@ export default function BuyerDashboard() {
       maxWidth: "1200px",
       margin: "0 auto",
       padding: "20px",
-      backgroundColor: "#fff7e6", // Tema Shopee
+      backgroundColor: "#fff7e6",
       minHeight: "100vh",
     },
     header: {
-      backgroundColor: "#ee4d2d", // Shopee orange
+      backgroundColor: "#ee4d2d",
       color: "white",
       padding: "1rem",
       borderRadius: "4px",
@@ -42,6 +51,7 @@ export default function BuyerDashboard() {
       border: "2px solid white",
       borderRadius: "4px",
       cursor: "pointer",
+      marginLeft: "10px",
     },
     table: {
       width: "100%",
@@ -98,6 +108,44 @@ export default function BuyerDashboard() {
       backgroundColor: "#ee4d2d",
       color: "white",
     },
+    mainContent: {
+      position: "relative",
+    }
+  };
+
+  React.useEffect(() => {
+    if (actionData?.success && actionData?.cart) {
+      setCart(actionData.cart);
+    }
+  }, [actionData]);
+
+  const handleAddToCart = async (event, productId) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch(`/buyer/home/cart/add/${productId}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setCart(result.cart);
+        setCartError(null);
+      } else {
+        setCartError(result.error || "Gagal menambahkan ke keranjang");
+      }
+    } catch (error) {
+      setCartError("Gagal menambahkan ke keranjang");
+      console.error(error);
+    }
+  };
+
+  const calculateTotal = () => {
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
   const formatPrice = (price) => {
@@ -107,29 +155,50 @@ export default function BuyerDashboard() {
     }).format(price);
   };
 
-  // Navigasi halaman
   const goToPage = (page) => {
     if (page > 0 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
+  
+  const navigate = useNavigate();
 
   return (
     <div style={styles.container}>
-      {/* Header */}
       <div style={styles.header}>
         <h1 style={styles.headerTitle}>Welcome, Buyer</h1>
         <div>
-          <Link to="/cart" style={styles.button}>
+          <button
+            style={styles.button}
+            onClick={() => navigate("/buyer/home/cart")}
+          >
             Cart
-          </Link>
-          <Link to="/" style={styles.button}>
+          </button>
+          <button style={styles.button} onClick={() => navigate("/")}>
             Logout
-          </Link>
+          </button>
         </div>
       </div>
 
-      {/* Product List */}
+      <div style={styles.mainContent}>
+        <Outlet />
+      </div>
+
+      {actionData?.error && (
+        <div
+          style={{
+            backgroundColor: "#ffebee",
+            color: "#c62828",
+            padding: "10px",
+            marginBottom: "10px",
+            borderRadius: "4px",
+            border: "1px solid #ef9a9a",
+          }}
+        >
+          {actionData.error}
+        </div>
+      )}
+
       <h2>Barang</h2>
       <table style={styles.table}>
         <thead>
@@ -158,7 +227,8 @@ export default function BuyerDashboard() {
                 <td style={styles.td}>{product.quantity}</td>
                 <td style={styles.td}>{formatPrice(product.price)}</td>
                 <td style={styles.td}>
-                  <Form method="post" action={`/cart/add/${product.id}`}>
+                  <Form method="post" style={{ display: "flex", gap: "8px" }}>
+                    <input type="hidden" name="productId" value={product.id} />
                     <input
                       type="number"
                       name="quantity"
@@ -167,8 +237,14 @@ export default function BuyerDashboard() {
                       max={product.quantity}
                       style={styles.input}
                     />
-                    <button type="submit" style={styles.addToCartButton}>
-                      Add to Cart
+                    <button
+                      type="submit"
+                      style={styles.addToCartButton}
+                      disabled={navigation.state === "submitting"}
+                    >
+                      {navigation.state === "submitting"
+                        ? "Menambahkan..."
+                        : "Add to Cart"}
                     </button>
                   </Form>
                 </td>
@@ -184,7 +260,6 @@ export default function BuyerDashboard() {
         </tbody>
       </table>
 
-      {/* Pagination */}
       <div style={styles.pagination}>
         <button
           onClick={() => goToPage(currentPage - 1)}

@@ -9,7 +9,7 @@ export default function EditProduct() {
     name: product.name,
     quantity: product.quantity,
     price: product.price,
-    image: product.image
+    image: product.image,
   });
 
   const styles = {
@@ -57,7 +57,7 @@ export default function EditProduct() {
     },
     input: {
       width: "100%",
-      padding: "8px 12px",
+      padding: "8px 0",
       border: "1px solid #ccc",
       borderRadius: "3px",
       fontSize: "14px",
@@ -94,7 +94,7 @@ export default function EditProduct() {
     updateButton: {
       backgroundColor: "#ee4d2d",
       color: "white",
-      '&:hover': {
+      "&:hover": {
         backgroundColor: "#d73211",
       },
     },
@@ -102,22 +102,22 @@ export default function EditProduct() {
       backgroundColor: "#fff",
       color: "#555",
       border: "1px solid #ddd",
-      '&:hover': {
+      "&:hover": {
         backgroundColor: "#f5f5f5",
       },
     },
     pricePrefix: {
-      position: 'relative',
+      position: "relative",
     },
     pricePrefixText: {
-      position: 'absolute',
-      left: '12px',
-      top: '50%',
-      transform: 'translateY(-50%)',
-      color: '#666',
+      position: "absolute",
+      left: "12px",
+      top: "50%",
+      transform: "translateY(-50%)",
+      color: "#666",
     },
     priceInput: {
-      paddingLeft: '45px',
+      paddingLeft: "45px",
     },
   };
 
@@ -127,7 +127,7 @@ export default function EditProduct() {
     if (!formData.name || formData.name.trim() === "") {
       newErrors.name = "Nama barang harus diisi";
     }
-    
+
     if (!formData.image || formData.image.trim() === "") {
       newErrors.image = "URL gambar harus diisi";
     }
@@ -149,7 +149,7 @@ export default function EditProduct() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    
+
     if (errors[name]) {
       const updatedErrors = { ...errors };
       delete updatedErrors[name];
@@ -161,9 +161,9 @@ export default function EditProduct() {
     <div style={styles.container}>
       <div style={styles.header}>
         <h1 style={{ margin: 0, fontSize: "20px" }}>Edit Barang</h1>
-        <Link 
-          to="/admin/barang" 
-          style={{ color: 'white', textDecoration: 'none', fontSize: '14px' }}
+        <Link
+          to="/admin/barang"
+          style={{ color: "white", textDecoration: "none", fontSize: "14px" }}
         >
           Kembali
         </Link>
@@ -172,7 +172,8 @@ export default function EditProduct() {
       <div style={styles.content}>
         <Form method="put">
           <div style={styles.idDisplay}>
-            <strong>ID: </strong>{product.id}
+            <strong>ID: </strong>
+            {product.id}
           </div>
 
           <div style={styles.formGroup}>
@@ -191,6 +192,13 @@ export default function EditProduct() {
           </div>
 
           <div style={styles.formGroup}>
+            {formData.image && (
+              <img
+                src={formData.image}
+                alt="Preview"
+                style={styles.imagePreview}
+              />
+            )}
             <label style={styles.label}>URL Gambar:</label>
             <input
               type="url"
@@ -202,13 +210,7 @@ export default function EditProduct() {
                 ...(errors.image ? styles.inputError : {}),
               }}
             />
-            {formData.image && (
-              <img
-                src={formData.image}
-                alt="Preview"
-                style={styles.imagePreview}
-              />
-            )}
+
             {errors.image && <div style={styles.errorText}>{errors.image}</div>}
           </div>
 
@@ -253,7 +255,7 @@ export default function EditProduct() {
           <div style={styles.buttonGroup}>
             <button
               type="submit"
-              style={{...styles.button, ...styles.updateButton}}
+              style={{ ...styles.button, ...styles.updateButton }}
               onClick={(e) => {
                 if (!validateForm()) {
                   e.preventDefault();
@@ -264,8 +266,8 @@ export default function EditProduct() {
             </button>
             <button
               type="button"
-              style={{...styles.button, ...styles.cancelButton}}
-              onClick={() => navigate('/admin/barang')}
+              style={{ ...styles.button, ...styles.cancelButton }}
+              onClick={() => navigate("/admin/barang")}
             >
               Batal
             </button>
