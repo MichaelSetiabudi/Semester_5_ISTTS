@@ -67,7 +67,7 @@ const router = createBrowserRouter([
             path: "home/cart",
             element: <Cart />,
             loader: productLoader.loadCart,
-            action: productLoader.cartAction  // Use the combined action handler
+            action: productLoader.cartAction  
           }
         ],
       },

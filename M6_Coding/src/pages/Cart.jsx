@@ -87,7 +87,6 @@ export default function Cart() {
       return;
     }
 
-    // Update the cart immediately
     const updatedItems = updatedCart.map(item => {
       if (item.id === id) {
         return { ...item, quantity: newQuantity };
@@ -96,8 +95,6 @@ export default function Cart() {
     });
 
     setUpdatedCart(updatedItems);
-
-    // Submit the updated quantity to the server
     fetcher.submit(
       { 
         action: "updateQuantity", 
