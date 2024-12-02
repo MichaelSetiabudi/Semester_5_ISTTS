@@ -1,11 +1,9 @@
-// loaders/productLoader.js
 import productsData from "../data/products.json";
 import { redirect } from "react-router-dom";
 
-// Create a memory copy of products that will be used during runtime
 let products = {
   products: [...productsData.products],
-  cart: [], // New shopping cart array
+  cart: [], 
 };
 
 
@@ -71,7 +69,6 @@ const formProductAction = async (data) => {
         };
       }
 
-      // Prepare new product data
       const processedProduct = {
         name: newProduct.name,
         image: newProduct.image,
@@ -80,7 +77,6 @@ const formProductAction = async (data) => {
         id: products.products.length + 1,
       };
 
-      // Add new product to memory
       products.products.push(processedProduct);
 
       return redirect("/admin/barang");
@@ -96,7 +92,6 @@ const formProductAction = async (data) => {
         };
       }
 
-      // Find product index
       const productIndex = products.products.findIndex(
         (x) => x.id == data.params.id
       );
@@ -105,33 +100,25 @@ const formProductAction = async (data) => {
         throw new Error("Produk tidak ditemukan");
       }
 
-      // Update product in memory dengan menyimpan semua data yang ada
       const updatedProduct = {
-        ...products.products[productIndex], // Preserve existing data
+        ...products.products[productIndex], 
         name: updatedData.name,
         quantity: Number(updatedData.quantity),
         price: Number(updatedData.price),
         image:updatedData.image,
-        // Pastikan ID tetap sama
         id: products.products[productIndex].id
       };
 
-      // Replace product lama dengan yang baru
       products.products[productIndex] = updatedProduct;
-
-      // Ensure the page fetches the updated products list on redirect
       return redirect("/admin/barang");
     } else if (data.request.method === "DELETE") {
       const productId = data.params.id;
       const productIndex = products.products.findIndex(
         (x) => x.id == productId
       );
-
       if (productIndex === -1) {
         throw new Error("Produk tidak ditemukan");
       }
-
-      // Remove product from memory
       products.products.splice(productIndex, 1);
 
       return redirect("/admin/barang");
@@ -148,8 +135,6 @@ const addToCartAction = async ({ request }) => {
     const formData = await request.formData();
     const productId = formData.get('productId');
     const quantity = Number(formData.get('quantity'));
-
-    // Find the product
     const product = products.products.find(p => p.id == productId);
 
     if (!product) {
@@ -159,19 +144,15 @@ const addToCartAction = async ({ request }) => {
       };
     }
 
-    // Check if requested quantity exceeds available quantity
     if (quantity > product.quantity) {
       return {
         success: false,
         error: `Stok tidak mencukupi. Tersedia hanya ${product.quantity} barang.`
       };
     }
-
-    // Check if product already in cart
     const existingCartItem = products.cart.find(item => item.id == productId);
 
     if (existingCartItem) {
-      // If product exists, update quantity
       const totalRequestedQuantity = existingCartItem.quantity + quantity;
       
       if (totalRequestedQuantity > product.quantity) {
@@ -183,7 +164,6 @@ const addToCartAction = async ({ request }) => {
 
       existingCartItem.quantity = totalRequestedQuantity;
     } else {
-      // If product not in cart, add new item
       products.cart.push({
         id: product.id,
         name: product.name,
@@ -193,7 +173,6 @@ const addToCartAction = async ({ request }) => {
       });
     }
 
-    // No deduction of stock in this action
     return { 
       success: true, 
       cart: products.cart 
@@ -260,8 +239,7 @@ const checkoutAction = async ({ formData }) => {
       product.quantity -= cartItem.quantity;
     }
 
-    products.cart = []; // Kosongkan keranjang
-
+    products.cart = []; 
     return redirect("/buyer/home");
   } catch (error) {
     return {
@@ -284,7 +262,6 @@ const updateCartItemQuantity = async (data) => {
       return { success: false, error: "Stok tidak mencukupi" };
     }
 
-    // Update the cart item
     const cartItem = products.cart.find((item) => item.id === parseInt(id));
     
     if (cartItem) {
@@ -316,12 +293,9 @@ const deleteCartItemAction = async ({ formData }) => {
       };
     }
 
-    // Hapus item dari keranjang
     products.cart.splice(itemIndex, 1);
 
     console.log("Keranjang setelah penghapusan:", products.cart);
-
-    // Redirect ke halaman cart untuk memastikan loader dijalankan ulang
     return redirect("/buyer/home/cart");
   } catch (error) {
     console.error("Error saat menghapus item dari keranjang:", error);

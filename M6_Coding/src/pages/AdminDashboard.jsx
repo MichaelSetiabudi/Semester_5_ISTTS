@@ -144,7 +144,6 @@ export default function AdminDashboard() {
     },
   };
 
-  // Validation function
   const validateForm = () => {
     const newErrors = {};
 
@@ -170,12 +169,10 @@ export default function AdminDashboard() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Input change handler
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewProduct({ ...newProduct, [name]: value });
 
-    // Clear specific error when user starts typing
     if (errors[name]) {
       const updatedErrors = { ...errors };
       delete updatedErrors[name];
@@ -183,7 +180,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Price formatting function
   const formatPrice = (price) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
@@ -191,7 +187,6 @@ export default function AdminDashboard() {
     }).format(price);
   };
 
-  // Effect to handle form submission results
   useEffect(() => {
     if (actionData) {
       if (actionData.success) {
@@ -221,7 +216,6 @@ export default function AdminDashboard() {
 
   return (
     <div style={styles.container}>
-      {/* Alert */}
       {showAlert && (
         <div style={styles.alertContainer}>
           <div
@@ -247,7 +241,6 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Header */}
       <div style={styles.header}>
         <h1>Master Barang</h1>
         <Link
@@ -262,9 +255,7 @@ export default function AdminDashboard() {
         </Link>
       </div>
 
-      {/* Content */}
       <div style={styles.content}>
-        {/* Product Table */}
         <table style={styles.table}>
           <thead>
             <tr>
@@ -324,10 +315,8 @@ export default function AdminDashboard() {
           </tbody>
         </table>
 
-        {/* Product Add Form */}
         <Form method="post">
           <h2 style={{ marginBottom: "15px" }}>Tambah Barang Baru</h2>
-          {/* Name Input */}
           <div>
             <input
               type="text"
@@ -342,8 +331,6 @@ export default function AdminDashboard() {
             />
             {errors.name && <div style={styles.errorText}>{errors.name}</div>}
           </div>
-
-          {/* Image Input */}
           <div>
             <input
               type="url"
@@ -358,8 +345,6 @@ export default function AdminDashboard() {
             />
             {errors.image && <div style={styles.errorText}>{errors.image}</div>}
           </div>
-
-          {/* Quantity Input */}
           <div>
             <input
               type="number"
@@ -377,8 +362,6 @@ export default function AdminDashboard() {
               <div style={styles.errorText}>{errors.quantity}</div>
             )}
           </div>
-
-          {/* Price Input */}
           <div>
             <input
               type="number"
