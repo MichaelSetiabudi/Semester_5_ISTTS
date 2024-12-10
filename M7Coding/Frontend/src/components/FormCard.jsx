@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const FormCard = ({ form, onDelete }) => {
+  const navigate = useNavigate();
+
   const styles = {
     formCard: {
       backgroundColor: "white",
@@ -50,6 +53,10 @@ const FormCard = ({ form, onDelete }) => {
     },
   };
 
+  const handleView = () => {
+    navigate(`/view/${form._id}`);
+  };
+
   return (
     <div style={styles.formCard}>
       <div style={styles.cardTopBorder}></div>
@@ -61,7 +68,9 @@ const FormCard = ({ form, onDelete }) => {
         <p style={styles.cardText}>Total Responses: {form.responses}</p>
 
         <div style={styles.buttonGroup}>
-          <button style={styles.actionButton}>View</button>
+          <button style={styles.actionButton} onClick={handleView}>
+            View
+          </button>
           <button style={styles.actionButton}>Edit</button>
           <button
             style={styles.actionButton}
@@ -75,4 +84,4 @@ const FormCard = ({ form, onDelete }) => {
   );
 };
 
-export default FormCard;
+export default FormCard

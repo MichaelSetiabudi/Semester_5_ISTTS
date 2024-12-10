@@ -61,8 +61,10 @@ const FormsList = () => {
         setLoading(false);
       });
   }, []);
-
   const handleDelete = (id) => {
+    // Tambahkan konfirmasi
+    setLoading(true); // Optional: tambahkan loading state
+
     axios
       .delete(`http://localhost:5000/api/forms/${id}`)
       .then(() => {
@@ -70,6 +72,10 @@ const FormsList = () => {
       })
       .catch((error) => {
         console.error("Error deleting form:", error);
+        alert("Failed to delete form. Please try again.");
+      })
+      .finally(() => {
+        setLoading(false); 
       });
   };
 
@@ -84,10 +90,7 @@ const FormsList = () => {
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Welcome!</h1>
-      <button
-        style={styles.newFormButton}
-        onClick={() => navigate("/newForm")}
-      >
+      <button style={styles.newFormButton} onClick={() => navigate("/newForm")}>
         Start a new form
       </button>
 
@@ -98,11 +101,7 @@ const FormsList = () => {
       ) : (
         <div style={styles.formsGrid}>
           {forms.map((form) => (
-            <FormCard
-              key={form._id}
-              form={form}
-              onDelete={handleDelete}
-            />
+            <FormCard key={form._id} form={form} onDelete={handleDelete} />
           ))}
         </div>
       )}

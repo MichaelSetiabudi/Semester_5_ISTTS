@@ -1,0 +1,70 @@
+[{
+  "_id": {
+    "$oid": "674fcf7159aabd21d5da35ba"
+  },
+  "formId": {
+    "$oid": "674fcf7159aabd21d5da35b8"
+  },
+  "title": "apakah yoga itu orang?",
+  "type": "multiple-choice",
+  "options": [
+    "ya",
+    "bisa jadi ",
+    "mungkin",
+    "maybe"
+  ],
+  "required": false,
+  "shortAnswerText": "",
+  "createdAt": {
+    "$date": "2024-12-04T03:41:37.863Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-04T03:41:37.863Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "674fcf7159aabd21d5da35bc"
+  },
+  "formId": {
+    "$oid": "674fcf7159aabd21d5da35b8"
+  },
+  "title": "jelaskan makluk apa itu yoga",
+  "type": "short-answer",
+  "options": [],
+  "required": true,
+  "shortAnswerText": "ya mana saya tahu kok nanya saya",
+  "createdAt": {
+    "$date": "2024-12-04T03:41:37.868Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-04T03:41:37.868Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "674fcf7159aabd21d5da35be"
+  },
+  "formId": {
+    "$oid": "674fcf7159aabd21d5da35b8"
+  },
+  "title": "tes",
+  "type": "multiple-choice",
+  "options": [
+    "1",
+    "2",
+    "3",
+    "4"
+  ],
+  "required": false,
+  "shortAnswerText": "",
+  "createdAt": {
+    "$date": "2024-12-04T03:41:37.871Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-04T03:41:37.871Z"
+  },
+  "__v": 0
+}]
